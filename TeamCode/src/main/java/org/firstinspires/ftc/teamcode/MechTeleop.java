@@ -20,8 +20,8 @@ public class MechTeleop extends LinearOpMode{
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
-        //RobotHardware roboHardware = new RobotHardware(hardwareMap, this);
-        //roboHardware.initialize();
+        RobotHardware roboHardware = new RobotHardware(hardwareMap, this);
+        roboHardware.initialize();
 
         waitForStart();
 
