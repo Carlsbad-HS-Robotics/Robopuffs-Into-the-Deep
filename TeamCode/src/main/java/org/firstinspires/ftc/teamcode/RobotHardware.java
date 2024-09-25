@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class RobotHardware {
 
@@ -22,19 +19,46 @@ public class RobotHardware {
         this.teleOp = teleOp;
     } //RobotHardware functions
 
+    //Hardware declarations
     public DcMotor liftMotor;
+
+    public DcMotor frontLeftMotor;
+    public DcMotor frontRightMotor;
+    public DcMotor backLeftMotor;
+    public DcMotor backRightMotor;
+
 
 
     //FUNCTIONS
 
     public void initialize() {
-
         //liftMotor intitialization
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         liftMotor.setPower(0);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public void robotCentricDrive(double x, double y, double rx) {
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y - x - rx) / denominator;
+        double backLeftPower = (y + x - rx) / denominator;
+        double frontRightPower = (y + x + rx) / denominator;
+        double backRightPower = (y - x + rx) / denominator;
+
+        double speedModifier = 0.4;
+
+        frontLeftPower = frontLeftPower - (frontLeftPower*speedModifier);
+        frontRightPower = frontRightPower - (frontRightPower*speedModifier);
+        backLeftPower = backLeftPower - (backLeftPower*speedModifier);
+        backRightPower = backRightPower - (backRightPower*speedModifier);
+
+        //Sets power to motors
+        frontLeftMotor.setPower(frontLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backLeftMotor.setPower(backLeftPower);
+        backRightMotor.setPower(backRightPower);
     }
 
 

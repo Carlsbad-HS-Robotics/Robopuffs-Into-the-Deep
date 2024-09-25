@@ -6,9 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-//@TeleOp(name="Encoder Testing", group="TeleOp");
 
-public class MechTeleop extends LinearOpMode{
+public class MechTeleop extends LinearOpMode {
 
     private DcMotor liftMotor;
 
@@ -28,6 +27,10 @@ public class MechTeleop extends LinearOpMode{
         //roboHardware.backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         while (opModeIsActive()) {
+
+            //RobotHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
+
+
             if (gamepad1.right_bumper == true) {
                 liftMotor.setPower(1);
             }
