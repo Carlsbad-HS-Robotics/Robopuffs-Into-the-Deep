@@ -41,7 +41,7 @@ public class MechTeleop extends LinearOpMode {
                 roboHardware.liftMotor.setPower(0);
             }
 
-            //servo controls
+            //Servo controls
             if (gamepad2.left_bumper) {
                 roboHardware.spinServo.setPosition(0.5);
             }
@@ -49,6 +49,7 @@ public class MechTeleop extends LinearOpMode {
                 roboHardware.spinServo.setPosition(0);
             }
 
+            //Set servo direction
             if (gamepad2.dpad_down) {
                 roboHardware.spinServo.setDirection(Servo.Direction.REVERSE); // intake
             }

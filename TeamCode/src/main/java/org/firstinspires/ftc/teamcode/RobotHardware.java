@@ -21,19 +21,17 @@ public class RobotHardware {
     } //RobotHardware functions
 
     //Hardware declarations
-    public DcMotor liftMotor;
+    //public angleDiff;
 
+    public DcMotor liftMotor; //port 0 E
     //Wheels
     public DcMotor frontLeftMotor; // port 3
     public DcMotor frontRightMotor; // port 0
     public DcMotor backLeftMotor; // port 2
     public DcMotor backRightMotor; // port 1
-
     public Servo spinServo; //port 0
 
-
-
-    //FUNCTIONS
+    //TELEOP FUNCTIONS
     public void initMotor(DcMotor motor, boolean forward) {
 
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,6 +88,50 @@ public class RobotHardware {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
     } //drive from robot POV
+
+
+    /*
+    public void fieldCentricDrive (double x, double y, double rx) { //Removed ", LinearOpMode teleop" -- if it stopped working that might be why
+
+        // Read inverse IMU heading, as the IMU heading is CW positive
+
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        botHeading = botHeading+angleDiff;
+
+        // Rotate the movement direction counter to the robot's rotation
+        double rotX = x * Math.cos(-botHeading) + y * Math.sin(-botHeading);
+        double rotY = -x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        robotCentricDrive(rotX,rotY,rx);
+
+    }
+
+    */
+
+    //AUTONOMOUS FUNCTIONS
+    public void autoStop () {
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+    } //Stop all drive movement
+
+    public void autoForward() {
+
+    } //drive forward one space (or x distance)
+
+    public void autoLeft() {
+
+    }
+
+    public void autoRight() {
+
+    }
 
 
 } //class RobotHardware
