@@ -22,7 +22,6 @@ public class RobotHardware {
 
     //Hardware declarations
     //public angleDiff;
-
     public DcMotor liftMotor; //port 0 E
     //Wheels
     public DcMotor frontLeftMotor; // port 3
@@ -57,7 +56,7 @@ public class RobotHardware {
 
         //Lift Motor
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        initMotor(liftMotor, true);
+        initMotor(liftMotor, false);
 
         //Servo
         spinServo = hardwareMap.get(Servo.class, "spinServo");
@@ -88,7 +87,6 @@ public class RobotHardware {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
     } //drive from robot POV
-
 
     /*
     public void fieldCentricDrive (double x, double y, double rx) { //Removed ", LinearOpMode teleop" -- if it stopped working that might be why

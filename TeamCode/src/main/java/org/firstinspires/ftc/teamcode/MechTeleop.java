@@ -27,34 +27,35 @@ public class MechTeleop extends LinearOpMode {
         roboHardware.backLeftMotor.setPower(0);
         roboHardware.backRightMotor.setPower(0);
 
+        boolean running = false;
+        double liftMotorPower = 0.3;
+
         while (opModeIsActive()) {
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
 
             //lift motor controls
             if (gamepad2.right_stick_y > 0) {
-                roboHardware.liftMotor.setPower(0.5);
+                roboHardware.liftMotor.setPower(liftMotorPower);
             }
             else if (gamepad2.right_stick_y < 0) {
-                roboHardware.liftMotor.setPower(-0.5);
+                roboHardware.liftMotor.setPower(-liftMotorPower);
             }
             else {
                 roboHardware.liftMotor.setPower(0);
             }
 
-            //Servo controls
-            if (gamepad2.left_bumper) {
-                roboHardware.spinServo.setPosition(0.5);
-            }
-            else if (gamepad2.right_bumper) {
-                roboHardware.spinServo.setPosition(0);
-            }
 
-            //Set servo direction
+            //Servo controls
             if (gamepad2.dpad_down) {
-                roboHardware.spinServo.setDirection(Servo.Direction.REVERSE); // intake
-            }
+                roboHardware.spinServo.setDirection(Servo.Direction.REVERSE);
+                roboHardware.spinServo.setPosition(0);
+            } //intake
             else if (gamepad2.dpad_up) {
-                roboHardware.spinServo.setDirection(Servo.Direction.FORWARD); // outtake
+                roboHardware.spinServo.setDirection(Servo.Direction.FORWARD);
+                roboHardware.spinServo.setPosition(0);
+            } //export
+            else {
+                roboHardware.spinServo.setPosition(0.5);
             }
         }
     }
