@@ -31,6 +31,7 @@ public class MechTeleop extends LinearOpMode {
         double liftMotorPower = 0.3;
 
         while (opModeIsActive()) {
+
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
 
             //lift motor controls
@@ -43,7 +44,6 @@ public class MechTeleop extends LinearOpMode {
             else {
                 roboHardware.liftMotor.setPower(0);
             }
-
 
             //Servo controls
             if (gamepad2.dpad_down) {

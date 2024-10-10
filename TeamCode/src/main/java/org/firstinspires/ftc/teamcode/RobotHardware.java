@@ -43,7 +43,6 @@ public class RobotHardware {
 
     }  //initializes a power motor
     public void initialize() {
-
         //Wheels
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         initMotor(frontLeftMotor, true);
