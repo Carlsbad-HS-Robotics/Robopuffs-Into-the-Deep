@@ -72,7 +72,7 @@ public class RobotHardware {
         double frontRightPower = (y + x + rx) / denominator;
         double backRightPower = (y - x + rx) / denominator;
 
-        double speedModifier = 0.4;
+        double speedModifier = 0.5;
 
         frontLeftPower = frontLeftPower - (frontLeftPower*speedModifier);
         frontRightPower = frontRightPower - (frontRightPower*speedModifier);
@@ -111,6 +111,7 @@ public class RobotHardware {
     */
 
     //AUTONOMOUS FUNCTIONS
+    int turnTime = 820;
     public void autoStop () {
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
@@ -118,17 +119,48 @@ public class RobotHardware {
         backRightMotor.setPower(0);
     } //Stop all drive movement
 
-    public void autoForward() {
+    public void autoMoveSquare(boolean forward, double numMats) {
 
-    } //drive forward one space (or x distance)
+        int multiplier = 1;
+
+        if (!forward) {
+            multiplier = -1;
+        } //if going backward, reverse the keypad input direction
+
+        robotCentricDrive(0,1 * multiplier,0);
+
+        int driveTime = (int) numMats * 915;
+        teleOp.sleep(driveTime);
+        stopDrive();
+
+    } //drive one space
 
     public void autoLeft() {
-
-    }
+        stopDrive();
+        robotCentricDrive(0,0,-1);
+        teleOp.sleep(turnTime);
+        stopDrive();
+        //pause(1000);
+    } //turn left
 
     public void autoRight() {
+        stopDrive();
+        robotCentricDrive(0,0,1);
+        teleOp.sleep(-turnTime);
+        stopDrive();
+    } //turn right
 
-    }
+    public void stopDrive() {
+        frontRightMotor.setPower(0);
+        frontLeftMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+    } //stops all drive movement
+    public void stopAll () {
+        stopDrive();
+        liftMotor.setPower(0);
+        spinServo.setPosition(0.5);
+    } //stops all motor, servo, etc. movement
 
 
 } //class RobotHardware
