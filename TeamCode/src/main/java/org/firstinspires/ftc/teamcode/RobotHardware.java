@@ -108,9 +108,10 @@ public class RobotHardware {
 
     }
 
-    */
+    */ //field centric
 
     //AUTONOMOUS FUNCTIONS
+
     int turnTime = 820;
     public void autoStop () {
         frontLeftMotor.setPower(0);
@@ -120,41 +121,38 @@ public class RobotHardware {
     } //Stop all drive movement
 
     public void autoMoveSquare(boolean forward, double numMats) {
-
+        int driveTime = (int) (915 * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
         int multiplier = 1;
-
         if (!forward) {
-            multiplier = -1;
-        } //if going backward, reverse the keypad input direction
+            multiplier = -multiplier;
+        }
 
-        robotCentricDrive(0,1 * multiplier,0);
-
-        int driveTime = (int) numMats * 915;
+        robotCentricDrive(0,multiplier, 0);
         teleOp.sleep(driveTime);
         stopDrive();
 
     } //drive one space
 
     public void autoLeft() {
+
         stopDrive();
-        robotCentricDrive(0,0,-1);
+        robotCentricDrive(0,0,-0.5);
         teleOp.sleep(turnTime);
         stopDrive();
-        //pause(1000);
     } //turn left
 
     public void autoRight() {
         stopDrive();
-        robotCentricDrive(0,0,1);
-        teleOp.sleep(-turnTime);
+        robotCentricDrive(0,0,0.5);
+        teleOp.sleep(turnTime);
         stopDrive();
     } //turn right
 
     public void stopDrive() {
         frontRightMotor.setPower(0);
         frontLeftMotor.setPower(0);
-        backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
     } //stops all drive movement
     public void stopAll () {
         stopDrive();
