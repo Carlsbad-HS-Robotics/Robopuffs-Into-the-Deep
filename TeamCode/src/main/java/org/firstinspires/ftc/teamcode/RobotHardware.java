@@ -141,6 +141,10 @@ public class RobotHardware {
         stopDrive();
     } //turn left
 
+    public void autoOdoTurn(boolean left) {
+
+    }
+
     public void autoRight() {
         stopDrive();
         robotCentricDrive(0,0,0.5);

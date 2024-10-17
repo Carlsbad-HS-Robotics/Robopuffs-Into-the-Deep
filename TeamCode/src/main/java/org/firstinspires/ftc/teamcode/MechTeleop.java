@@ -7,6 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+/*TODO
+Test odometry / heading sensors
+Figure out math for odometry
+get turn figured out
+ */
+
 @TeleOp(name="Mechanism TeleOp", group="TeleOps")
 public class MechTeleop extends LinearOpMode {
 
