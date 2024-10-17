@@ -1,27 +1,30 @@
-package org.firstinspires.ftc.teamcode;
+/*
+Robopuffs 2024-2025: Into the Deep
+Author: Brielle McBarron
+ */
 
+package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.HardwareMap; //defines each piece of hardware to be coded
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 public class RobotHardware {
 
     public LinearOpMode teleOp;
 
     //TODO what is IMU again??
-    public IMU imu;
-    public HardwareMap hardwareMap;
-
     public RobotHardware (HardwareMap hardwareMap, LinearOpMode teleOp) {
         this.hardwareMap = hardwareMap;
         this.teleOp = teleOp;
     } //RobotHardware functions
 
-    //Hardware declarations
-    //public angleDiff;
+    public double angleDiff = 0;
+    public IMU imu;
+    public HardwareMap hardwareMap;
     public DcMotor liftMotor; //port 0 E
     //Wheels
     public DcMotor frontLeftMotor; // port 3
@@ -62,7 +65,21 @@ public class RobotHardware {
         spinServo.setDirection(Servo.Direction.REVERSE);
         spinServo.scaleRange(0, 1);
 
+        //IMU
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
     } // initializes all hardware
+
+    public void reInitImu() {
+        double newHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        angleDiff = -newHeading;
+    } //Reinitialize IMU
 
     public void robotCentricDrive(double x, double y, double rx) {
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -87,8 +104,7 @@ public class RobotHardware {
         backRightMotor.setPower(backRightPower);
     } //drive from robot POV
 
-    /*
-    public void fieldCentricDrive (double x, double y, double rx) { //Removed ", LinearOpMode teleop" -- if it stopped working that might be why
+    public void fieldCentricDrive (double x, double y, double rx) {
 
         // Read inverse IMU heading, as the IMU heading is CW positive
 
@@ -108,7 +124,7 @@ public class RobotHardware {
 
     }
 
-    */ //field centric
+    //field centric
 
     //AUTONOMOUS FUNCTIONS
 

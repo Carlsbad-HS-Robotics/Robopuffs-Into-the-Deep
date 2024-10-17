@@ -38,7 +38,8 @@ public class MechTeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
+            //roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
+            roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
 
             //lift motor controls
             if (gamepad2.right_stick_y > 0) {
