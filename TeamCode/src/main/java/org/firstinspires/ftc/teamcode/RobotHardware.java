@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 public class RobotHardware {
-
     public LinearOpMode teleOp;
 
     //TODO what is IMU again??
@@ -158,7 +157,8 @@ public class RobotHardware {
     } //turn left
 
     public void autoOdoTurn(boolean left) {
-
+        teleOp.telemetry.addData("Heading:", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        teleOp.telemetry.update();
     }
 
     public void autoRight() {
