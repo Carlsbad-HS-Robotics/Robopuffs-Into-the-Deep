@@ -13,7 +13,7 @@ public class Auto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            roboHardware.autoOdoTurn(true);
+            roboHardware.getBotHeadings();
         }
 
     } //runOpMode

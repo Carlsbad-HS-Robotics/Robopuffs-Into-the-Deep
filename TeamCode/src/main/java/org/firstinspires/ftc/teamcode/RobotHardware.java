@@ -156,9 +156,28 @@ public class RobotHardware {
         stopDrive();
     } //turn left
 
-    public void autoOdoTurn(boolean left) {
+    public void getBotHeadings() {
         teleOp.telemetry.addData("Heading:", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         teleOp.telemetry.update();
+    }
+
+    public void autoOdoLeft(boolean left){
+        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double targetHeading = currentHeading + 90;
+
+        /*
+        45  = 0.7853 = π/4
+        90  = 1.5708 = π/2
+        135 = 2.3562 = 3π/4
+        180 = 3.1415 = π
+        225 = 3.9269 = 5π/4
+        270 = 4.7124 = 3π/2
+        315 = 5.4978 = 7π/4
+        */
+
+        teleOp.telemetry.addData("Goal Heading: ", targetHeading);
+        teleOp.telemetry.update();
+
     }
 
     public void autoRight() {
