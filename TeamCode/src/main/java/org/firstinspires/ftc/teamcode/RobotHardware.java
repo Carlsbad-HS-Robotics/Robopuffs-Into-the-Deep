@@ -114,7 +114,7 @@ public class RobotHardware {
         double rotX = x * Math.cos(-botHeading) + y * Math.sin(-botHeading);
         double rotY = -x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        rotX = rotX * 1.1;  // Counteract imperfect strafing
+        rotX = rotX * 1.2;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
@@ -138,11 +138,11 @@ public class RobotHardware {
     public void autoMoveSquare(boolean forward, double numMats) {
         int driveTime = (int) (915 * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
         int multiplier = 1;
-        if (!forward) {
+        if (forward) {
             multiplier = -multiplier;
         }
 
-        robotCentricDrive(0,multiplier, 0);
+        robotCentricDrive(0, multiplier,0);
         teleOp.sleep(driveTime);
         stopDrive();
 
@@ -157,14 +157,11 @@ public class RobotHardware {
     } //turn left
 
     public void getBotHeadings() {
-        teleOp.telemetry.addData("Heading:", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        teleOp.telemetry.update();
-    }
 
-    public void autoOdoLeft(boolean left){
         double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double targetHeading = currentHeading + 90;
+        double currentDegreeHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
+        //TODO test angle sensing
         /*
         45  = 0.7853 = π/4
         90  = 1.5708 = π/2
@@ -173,9 +170,74 @@ public class RobotHardware {
         225 = 3.9269 = 5π/4
         270 = 4.7124 = 3π/2
         315 = 5.4978 = 7π/4
-        */
+        */ //angles: degrees/radians
 
-        teleOp.telemetry.addData("Goal Heading: ", targetHeading);
+        //Angle Displays
+        teleOp.telemetry.addData("DEGREES", "");
+        teleOp.telemetry.addData("Current Heading: ", currentDegreeHeading);
+        teleOp.telemetry.addData("RADIANS","");
+        teleOp.telemetry.addData("(Radians) Current Heading: ", currentHeading);
+
+
+    }
+
+    public double fixTargetHeading (double target) {
+        if (target > 360) {
+            target -= 360;
+        } else if (target < 360) {
+            target += 360;
+        }
+
+        return target;
+    } //alters headings to be in a 0-360 degree range
+
+    public void autoOdoTurn(boolean left){
+
+        //TODO test this function
+        stopAll();
+        //calculate goal & current angles
+        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double targetHeading = currentHeading;
+        if (left) {
+            targetHeading = currentHeading - 90;
+        } else {
+            targetHeading = currentHeading + 90;
+        }
+        teleOp.telemetry.addData("targetHeading before fix: ", targetHeading);
+        fixTargetHeading(targetHeading);
+        //targetHeading = fixTargetHeading(targetHeading); //TODO uncomment this and remove prev line?
+        teleOp.telemetry.addData("targetHeading after fix:", targetHeading);
+        //TODO if the targetHeading before/after fix remains unchanged, uncomment other line and comment the other
+
+        //Print angles
+        teleOp.telemetry.addLine("Degrees");
+        teleOp.telemetry.addData("(Degrees) Current Heading: ", currentHeading);
+        teleOp.telemetry.addData("(Degrees) Goal Heading: ", targetHeading);
+        teleOp.telemetry.addLine();
+        teleOp.telemetry.update();
+
+        teleOp.sleep(1000);
+
+        teleOp.telemetry.addLine("Commencing movement...");
+        teleOp.telemetry.update();
+
+        while (currentHeading != targetHeading) {
+            robotCentricDrive(0,0,-0.5);
+        }
+
+        //TODO if the previous while statement is too specific, try this
+        /*
+        //if the range is too small, add a few degrees
+        double smaller = targetHeading - 0.5;
+        double bigger = targetHeading + 0.5;
+
+        while (currentHeading < smaller || currentHeading > bigger) {
+            robotCentricDrive(0,0,-0.5);0
+        }
+
+         */ //Option 2
+
+        teleOp.telemetry.addLine("Movement Complete.");
         teleOp.telemetry.update();
 
     }

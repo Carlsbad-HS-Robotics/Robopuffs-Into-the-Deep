@@ -40,6 +40,7 @@ public class MechTeleop extends LinearOpMode {
 
             //roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
             roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
+            roboHardware.getBotHeadings();
 
             //lift motor controls
             if (gamepad2.right_stick_y > 0) {
@@ -50,6 +51,15 @@ public class MechTeleop extends LinearOpMode {
             }
             else {
                 roboHardware.liftMotor.setPower(0);
+            }
+
+            //Auto turns
+            if (gamepad1.x) {
+                roboHardware.autoLeft();
+            } else if (gamepad1.b) {
+                roboHardware.autoRight();
+            } else if (gamepad1.y) {
+                roboHardware.autoMoveSquare(true, 1);
             }
 
             //Servo controls
