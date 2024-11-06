@@ -158,25 +158,26 @@ public class RobotHardware {
 
     public void getBotHeadings() {
 
-        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        //double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double currentDegreeHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        //TODO test angle sensing
+        if (currentDegreeHeading < 0) {
+            currentDegreeHeading += 360;
+        }
+
+        //TODO test angle sensing to get left/right directions (+ or -)
         /*
-        45  = 0.7853 = π/4
-        90  = 1.5708 = π/2
-        135 = 2.3562 = 3π/4
-        180 = 3.1415 = π
-        225 = 3.9269 = 5π/4
-        270 = 4.7124 = 3π/2
-        315 = 5.4978 = 7π/4
-        */ //angles: degrees/radians
+        Left
+        Right
+        */
 
         //Angle Displays
         teleOp.telemetry.addData("DEGREES", "");
         teleOp.telemetry.addData("Current Heading: ", currentDegreeHeading);
-        teleOp.telemetry.addData("RADIANS","");
-        teleOp.telemetry.addData("(Radians) Current Heading: ", currentHeading);
+        //teleOp.telemetry.addData("RADIANS","");
+        //teleOp.telemetry.addData("(Radians) Current Heading: ", currentHeading);
+
+        teleOp.telemetry.update();
 
 
     }
@@ -184,12 +185,24 @@ public class RobotHardware {
     public double fixTargetHeading (double target) {
         if (target > 360) {
             target -= 360;
-        } else if (target < 360) {
+        } else if (target < 0) {
             target += 360;
         }
 
         return target;
     } //alters headings to be in a 0-360 degree range
+
+    public double fixTargetHeading180 (double target, double nowDir) {
+        //assumes that headings are on a 180-0 and -180-0 range
+        double diff = Math.abs(target) - Math.abs(180);
+        if (target > 180) {
+            target = -180 + diff;
+        } else if (target < -180) {
+            target = 180 - diff;
+        }
+        return target;
+
+    } // on a -180 to 180 range
 
     public void autoOdoTurn(boolean left){
 
