@@ -5,6 +5,7 @@ Author: Brielle McBarron
 
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap; //defines each piece of hardware to be coded
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -33,6 +34,20 @@ public class RobotHardware {
     public Servo spinServo; //port 0
 
     //TELEOP FUNCTIONS
+    public void initEncoderMotor (DcMotor motor, boolean forward) {
+        motor.setPower(0);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        if (forward) {
+            motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        } else if (!forward) {
+            motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+
+        //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
     public void initMotor(DcMotor motor, boolean forward) {
 
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -273,6 +288,19 @@ public class RobotHardware {
         liftMotor.setPower(0);
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
+    public void encoderArm() {
 
+        liftMotor.setPower(0);
+        //liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setTargetPosition(0);
+
+    }
+
+    public void switchToEncoder(DcMotor motor, boolean forward) {
+        motor.setPower(0);
+        //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
 } //class RobotHardware
