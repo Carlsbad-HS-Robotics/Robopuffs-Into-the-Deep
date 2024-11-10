@@ -33,36 +33,42 @@ public class MechTeleop extends LinearOpMode {
         roboHardware.backLeftMotor.setPower(0);
         roboHardware.backRightMotor.setPower(0);
 
-        boolean running = false;
         double liftMotorPower = 0.3;
 
         while (opModeIsActive()) {
 
-            //roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
             roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
             roboHardware.getBotHeadings();
 
             //lift motor controls
             if (gamepad2.right_stick_y > 0) {
                 roboHardware.liftMotor.setPower(liftMotorPower);
-            }
+            } //up
             else if (gamepad2.right_stick_y < 0) {
                 roboHardware.liftMotor.setPower(-liftMotorPower);
-            }
+            } //down
             else {
                 roboHardware.liftMotor.setPower(0);
-            }
+            } //stop
+
 
             //Auto turns
             if (gamepad1.x) {
-                roboHardware.autoLeft();
-            } else if (gamepad1.b) {
-                roboHardware.autoRight();
-            } else if (gamepad1.y) {
+                roboHardware.autoOdoTurn(true);
+            } //left
+            else if (gamepad1.b && !gamepad1.start && !gamepad2.start) {
+                //make sure to exclude gamepad start because when setting controllers A & B it might accidentally run
+                roboHardware.autoOdoTurn(false);
+            } //right
+            else if (gamepad1.y) {
                 roboHardware.autoMoveSquare(true, 1);
+            } //forward square
+            else if (gamepad1.a && !gamepad1.start && !gamepad2.start) {
+                roboHardware.autoMoveSquare(false, 1);
             }
 
-            //Servo controls
+
+            //Wheel/Servo controls
             if (gamepad2.dpad_down) {
                 roboHardware.spinServo.setDirection(Servo.Direction.REVERSE);
                 roboHardware.spinServo.setPosition(0);
@@ -74,6 +80,7 @@ public class MechTeleop extends LinearOpMode {
             else {
                 roboHardware.spinServo.setPosition(0.5);
             }
+
         }
     }
 }

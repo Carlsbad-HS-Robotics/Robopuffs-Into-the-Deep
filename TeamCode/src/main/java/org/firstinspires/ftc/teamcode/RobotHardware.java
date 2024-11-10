@@ -16,7 +16,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 public class RobotHardware {
     public LinearOpMode teleOp;
 
-    //TODO what is IMU again??
     public RobotHardware (HardwareMap hardwareMap, LinearOpMode teleOp) {
         this.hardwareMap = hardwareMap;
         this.teleOp = teleOp;
@@ -87,6 +86,7 @@ public class RobotHardware {
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw(); //When initialized, resets the core/base direction as where it's facing
 
     } // initializes all hardware
 
@@ -142,15 +142,8 @@ public class RobotHardware {
 
     //AUTONOMOUS FUNCTIONS
 
-    int turnTime = 820;
-    public void autoStop () {
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-    } //Stop all drive movement
-
     public void autoMoveSquare(boolean forward, double numMats) {
+        //TODO make this encoder based so that it'll go off of distance not power; more precision
         int driveTime = (int) (915 * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
         int multiplier = 1;
         if (forward) {
@@ -162,14 +155,17 @@ public class RobotHardware {
         stopDrive();
 
     } //drive one space
+    public double fixAngles (double angle) {
+        //make everything 0 - 360
+        if (angle > 360) {
+            angle -= 360;
+        } else if (angle < 0) {
+            angle += 360;
+        }
 
-    public void autoLeft() {
+        return angle;
 
-        stopDrive();
-        robotCentricDrive(0,0,-0.5);
-        teleOp.sleep(turnTime);
-        stopDrive();
-    } //turn left
+    }
 
     public void getBotHeadings() {
 
@@ -180,103 +176,103 @@ public class RobotHardware {
             currentDegreeHeading += 360;
         }
 
-        //TODO test angle sensing to get left/right directions (+ or -)
         /*
-        Left
-        Right
+        Left = +
+        Right = -
         */
 
         //Angle Displays
         teleOp.telemetry.addData("DEGREES", "");
         teleOp.telemetry.addData("Current Heading: ", currentDegreeHeading);
-        //teleOp.telemetry.addData("RADIANS","");
-        //teleOp.telemetry.addData("(Radians) Current Heading: ", currentHeading);
-
         teleOp.telemetry.update();
-
-
     }
-
-    public double fixTargetHeading (double target) {
-        if (target > 360) {
-            target -= 360;
-        } else if (target < 0) {
-            target += 360;
-        }
-
-        return target;
-    } //alters headings to be in a 0-360 degree range
-
-    public double fixTargetHeading180 (double target, double nowDir) {
-        //assumes that headings are on a 180-0 and -180-0 range
-        double diff = Math.abs(target) - Math.abs(180);
-        if (target > 180) {
-            target = -180 + diff;
-        } else if (target < -180) {
-            target = 180 - diff;
-        }
-        return target;
-
-    } // on a -180 to 180 range
 
     public void autoOdoTurn(boolean left){
 
-        //TODO test this function
         stopAll();
-        //calculate goal & current angles
-        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        //******************************CALCULATIONS**************************************************
+        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES); //get the way robots currently facing
+        fixAngles(currentHeading); //make that on a 360 range
+
+
+        //CALCULATE NEW GOAL HEADING & DIRECTION TO TURN
         double targetHeading = currentHeading;
+        double turnPower = -0.3;
         if (left) {
-            targetHeading = currentHeading - 90;
+            targetHeading += 90;
         } else {
-            targetHeading = currentHeading + 90;
+            targetHeading -= 90;
+            turnPower = 0.3;
         }
-        teleOp.telemetry.addData("targetHeading before fix: ", targetHeading);
-        fixTargetHeading(targetHeading);
-        //targetHeading = fixTargetHeading(targetHeading); //TODO uncomment this and remove prev line?
-        teleOp.telemetry.addData("targetHeading after fix:", targetHeading);
-        //TODO if the targetHeading before/after fix remains unchanged, uncomment other line and comment the other
+        fixAngles(targetHeading);
 
-        //Print angles
-        teleOp.telemetry.addLine("Degrees");
-        teleOp.telemetry.addData("(Degrees) Current Heading: ", currentHeading);
-        teleOp.telemetry.addData("(Degrees) Goal Heading: ", targetHeading);
+
+        //CALCULATE RANGE BASED OFF OF GOAL HEADING
+        double offset = 5;
+        double smaller = targetHeading - offset;
+        //fixAngles(smaller);
+        double bigger = targetHeading + offset;
+        //fixAngles(bigger);
+
+        //******************************PRINT ANGLES**************************************************
+        int currentSim = (int) currentHeading; //Simplified current heading (not some crazy decimal)
+        int goalSim = (int) targetHeading; //Simplified goal heading
+        int smallPar = (int) smaller;
+        int bigPar = (int) bigger;
+        teleOp.telemetry.addData("Current Heading: ", currentSim);
+        teleOp.telemetry.addData("Goal Heading: ", goalSim);
         teleOp.telemetry.addLine();
+        teleOp.telemetry.addData("Smaller limit:", smallPar);
+        teleOp.telemetry.addData("Bigger limit:", bigPar);
         teleOp.telemetry.update();
 
-        teleOp.sleep(1000);
+        teleOp.sleep(2000);
 
-        teleOp.telemetry.addLine("Commencing movement...");
-        teleOp.telemetry.update();
+        //******************************START TURNING**************************************************
+        boolean angleReached = false;
+        while (!angleReached) {
+            //prevent infinite loop; get new heading and fix to 0-360
+            currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            fixAngles(currentHeading);
 
-        while (currentHeading != targetHeading) {
-            robotCentricDrive(0,0,-0.5);
+            //RANGE FULFILLMENT
+            boolean lessThanBig = false;
+            boolean moreThanSmall = false;
+            if (currentHeading < bigger) {
+                lessThanBig = true;
+
+            }
+            if (currentHeading > smaller) {
+                moreThanSmall = true;
+
+            }
+
+            //TEST IF AT THE GOAL ANGLE
+            if (moreThanSmall && lessThanBig) {
+                angleReached = true;
+            } else {
+                angleReached = false;
+            }
+
+            //PRINT ANGLES
+            currentSim = (int) currentHeading;
+            robotCentricDrive(0,0,turnPower);
+            teleOp.telemetry.addData("Goal Heading: ", goalSim);
+            teleOp.telemetry.addLine();
+            teleOp.telemetry.addLine("(Big) " + bigPar + " > " + currentSim + " (Heading)");
+            teleOp.telemetry.addLine("(Small) " + smallPar + " < " + currentSim + " (Heading)");
+            teleOp.telemetry.addLine();
+            teleOp.telemetry.update();
+
         }
+        stopDrive();
 
-        //TODO if the previous while statement is too specific, try this
-        /*
-        //if the range is too small, add a few degrees
-        double smaller = targetHeading - 0.5;
-        double bigger = targetHeading + 0.5;
-
-        while (currentHeading < smaller || currentHeading > bigger) {
-            robotCentricDrive(0,0,-0.5);0
-        }
-
-         */ //Option 2
-
+        //Signify end of turn
         teleOp.telemetry.addLine("Movement Complete.");
         teleOp.telemetry.update();
+        teleOp.sleep(1000);
 
     }
-
-    public void autoRight() {
-        stopDrive();
-        robotCentricDrive(0,0,0.5);
-        teleOp.sleep(turnTime);
-        stopDrive();
-    } //turn right
-
     public void stopDrive() {
         frontRightMotor.setPower(0);
         frontLeftMotor.setPower(0);
