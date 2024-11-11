@@ -32,7 +32,7 @@ public class RobotHardware {
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
 
-    //TELEOP FUNCTIONS
+    //****************************************TELEOP FUNCTIONS****************************************
     public void initEncoderMotor (DcMotor motor, boolean forward) {
         motor.setPower(0);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -46,7 +46,7 @@ public class RobotHardware {
         //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    }
+    } //initialize an encoder motor
     public void initMotor(DcMotor motor, boolean forward) {
 
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -88,13 +88,11 @@ public class RobotHardware {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw(); //When initialized, resets the core/base direction as where it's facing
 
-    } // initializes all hardware
-
+    } // initializes all hardware components
     public void reInitImu() {
         double newHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         angleDiff = -newHeading;
     } //Reinitialize IMU
-
     public void robotCentricDrive(double x, double y, double rx) {
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
 
@@ -117,7 +115,6 @@ public class RobotHardware {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
     } //drive from robot POV
-
     public void fieldCentricDrive (double x, double y, double rx) {
 
         // Read inverse IMU heading, as the IMU heading is CW positive
@@ -136,37 +133,7 @@ public class RobotHardware {
         // but only if at least one is out of the range [-1, 1]
         robotCentricDrive(rotX,rotY,rx);
 
-    }
-
-    //field centric
-
-    //AUTONOMOUS FUNCTIONS
-
-    public void autoMoveSquare(boolean forward, double numMats) {
-        //TODO make this encoder based so that it'll go off of distance not power; more precision
-        int driveTime = (int) (915 * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
-        int multiplier = 1;
-        if (forward) {
-            multiplier = -multiplier;
-        }
-
-        robotCentricDrive(0, multiplier,0);
-        teleOp.sleep(driveTime);
-        stopDrive();
-
-    } //drive one space
-    public double fixAngles (double angle) {
-        //make everything 0 - 360
-        if (angle > 360) {
-            angle -= 360;
-        } else if (angle < 0) {
-            angle += 360;
-        }
-
-        return angle;
-
-    }
-
+    } //drive from start POV (driver POV)
     public void getBotHeadings() {
 
         //double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -185,8 +152,53 @@ public class RobotHardware {
         teleOp.telemetry.addData("DEGREES", "");
         teleOp.telemetry.addData("Current Heading: ", currentDegreeHeading);
         teleOp.telemetry.update();
+    } //Prints robot headings out on the drive hub
+
+    //****************************************AUTONOMOUS FUNCTIONS************************************
+    public void autoMoveSquare(boolean forward, double numMats) {
+        //TODO make this encoder based so that it'll go off of distance not power; more precision
+        int driveTime = (int) (915 * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
+
+        //determine direction of movement based on whether it's going 'forward' (true) or backward (forward == false)
+        int multiplier = 1; //multiply drive speed by this to make direction positive or negative
+        if (forward) {
+            multiplier = -multiplier;
+        }
+
+
+        robotCentricDrive(0, multiplier,0); //tell the robot to drive
+        teleOp.sleep(driveTime); //drive for X amount of time
+        stopDrive();
+
+    } //drive one space (NOT encoder based)
+
+    public void autoMoveSquareSide (boolean left, double numMats) {
+        //TODO make this encoder based so that it'll go off of distance not power; more precision
+        int driveTime = (int) (915 * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
+
+        //determine direction of movement based on whether it's going 'forward' (true) or backward (forward == false)
+        int multiplier = 1; //multiply drive speed by this to make direction positive or negative
+        if (left) {
+            multiplier = -multiplier;
+        }
+
+
+        robotCentricDrive(multiplier, 0,0); //tell the robot to drive
+        teleOp.sleep(driveTime); //drive for X amount of time
+        stopDrive();
     }
 
+    public double fixAngles (double angle) {
+        //make everything 0 - 360
+        if (angle > 360) {
+            angle -= 360;
+        } else if (angle < 0) {
+            angle += 360;
+        }
+
+        return angle;
+
+    } //make an angle based on 0-360 degree range
     public void autoOdoTurn(boolean left){
 
         stopAll();
@@ -197,18 +209,18 @@ public class RobotHardware {
 
         //CALCULATE NEW GOAL HEADING & DIRECTION TO TURN
         double targetHeading = currentHeading;
-        double turnPower = -0.3;
+        double turnPower = -0.4;
         if (left) {
             targetHeading += 90;
         } else {
             targetHeading -= 90;
-            turnPower = 0.3;
+            turnPower = 0.4;
         }
         fixAngles(targetHeading);
 
 
         //CALCULATE RANGE BASED OFF OF GOAL HEADING
-        double offset = 5;
+        double offset = 2;
         double smaller = targetHeading - offset;
         //fixAngles(smaller);
         double bigger = targetHeading + offset;
@@ -272,7 +284,7 @@ public class RobotHardware {
         teleOp.telemetry.update();
         teleOp.sleep(1000);
 
-    }
+    } //turn based on odometry
     public void stopDrive() {
         frontRightMotor.setPower(0);
         frontLeftMotor.setPower(0);
@@ -285,18 +297,18 @@ public class RobotHardware {
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
     public void encoderArm() {
-
+        //TODO make arm movement encoder based
         liftMotor.setPower(0);
         //liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setTargetPosition(0);
 
-    }
+    } //moves arm based on encoder (NOT FINISHED)
 
     public void switchToEncoder(DcMotor motor, boolean forward) {
         motor.setPower(0);
         //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
+    } //switches a motor to encoder movement
 
 } //class RobotHardware

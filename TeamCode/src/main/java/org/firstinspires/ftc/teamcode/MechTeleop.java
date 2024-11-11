@@ -76,7 +76,7 @@ public class MechTeleop extends LinearOpMode {
             else if (gamepad2.dpad_up) {
                 roboHardware.spinServo.setDirection(Servo.Direction.FORWARD);
                 roboHardware.spinServo.setPosition(0);
-            } //export
+            } //output
             else {
                 roboHardware.spinServo.setPosition(0.5);
             }
