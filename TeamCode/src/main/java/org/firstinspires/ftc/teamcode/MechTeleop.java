@@ -28,19 +28,18 @@ public class MechTeleop extends LinearOpMode {
 
         waitForStart();
 
-        roboHardware.frontLeftMotor.setPower(0);
-        roboHardware.frontRightMotor.setPower(0);
-        roboHardware.backLeftMotor.setPower(0);
-        roboHardware.backRightMotor.setPower(0);
-
         double liftMotorPower = 0.3;
 
         while (opModeIsActive()) {
 
-            roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
-            roboHardware.getBotHeadings();
 
-            //lift motor controls
+
+            //******************************GAME FUNCTIONS******************************
+
+            roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
+            roboHardware.getBotHeadings(); //print headings
+
+            //**********ARM CONTROLS**********
             if (gamepad2.right_stick_y > 0) {
                 roboHardware.liftMotor.setPower(liftMotorPower);
             } //up
@@ -51,24 +50,7 @@ public class MechTeleop extends LinearOpMode {
                 roboHardware.liftMotor.setPower(0);
             } //stop
 
-
-            //Auto turns
-            if (gamepad1.x) {
-                roboHardware.autoOdoTurn(true);
-            } //left
-            else if (gamepad1.b && !gamepad1.start && !gamepad2.start) {
-                //make sure to exclude gamepad start because when setting controllers A & B it might accidentally run
-                roboHardware.autoOdoTurn(false);
-            } //right
-            else if (gamepad1.y) {
-                roboHardware.autoMoveSquare(true, 1);
-            } //forward square
-            else if (gamepad1.a && !gamepad1.start && !gamepad2.start) {
-                roboHardware.autoMoveSquare(false, 1);
-            }
-
-
-            //Wheel/Servo controls
+            //**********INTAKE CONTROLS**********
             if (gamepad2.dpad_down) {
                 roboHardware.spinServo.setDirection(Servo.Direction.REVERSE);
                 roboHardware.spinServo.setPosition(0);
@@ -80,6 +62,49 @@ public class MechTeleop extends LinearOpMode {
             else {
                 roboHardware.spinServo.setPosition(0.5);
             }
+
+            //******************************TEST FUNCTIONS******************************
+
+            //AUTO FUNCTIONS
+            if (gamepad1.dpad_up) {
+                roboHardware.autoMoveSquare(true, 1);
+            } else if (gamepad1.dpad_down) {
+                roboHardware.autoMoveSquare(false, 1);
+            } else if (gamepad1.dpad_left) {
+                roboHardware.autoMoveSquareSide(true,1);
+            } else if (gamepad1.dpad_right) {
+                roboHardware.autoMoveSquareSide(false,1);
+            }
+
+            //TEST ARM ENCODER
+            /*
+            //set mode
+            if (gamepad2.left_bumper) {
+                roboHardware.setArmtoEncoder();
+            } //set Arm to Encoder mode
+            else if (gamepad2.right_bumper) {
+                roboHardware.setArmtoPower();
+            } //set Arm to Power mode
+            //movement
+            int targetPos = 0;
+            if (gamepad2.left_stick_y > 0) {
+                targetPos = roboHardware.liftMotor.getCurrentPosition();
+                //roboHardware.liftMotor.setTargetPosition(targetPos + 50);
+                roboHardware.liftMotor.setTargetPosition(100);
+                roboHardware.liftMotor.setPower(0.5);
+            } //up
+            else if (gamepad2.left_stick_y < 0) {
+                targetPos = roboHardware.liftMotor.getCurrentPosition();
+                //roboHardware.liftMotor.setTargetPosition(targetPos -50);
+                roboHardware.liftMotor.setTargetPosition(-100);
+                roboHardware.liftMotor.setPower(0.5);
+            } //down
+            else {
+                roboHardware.liftMotor.setPower(0);
+            }
+
+             */
+
 
         }
     }
