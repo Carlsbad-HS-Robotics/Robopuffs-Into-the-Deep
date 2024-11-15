@@ -36,8 +36,9 @@ public class MechTeleop extends LinearOpMode {
 
             //******************************GAME FUNCTIONS******************************
 
-            roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
+            roboHardware.fieldCentricDrive(-gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
             roboHardware.getBotHeadings(); //print headings
+            //FIX left and right (reverse them)
 
             //**********ARM CONTROLS**********
             if (gamepad2.right_stick_y > 0) {
@@ -61,6 +62,10 @@ public class MechTeleop extends LinearOpMode {
             } //output
             else {
                 roboHardware.spinServo.setPosition(0.5);
+            }
+
+            if (gamepad1.right_stick_button) {
+                roboHardware.reInitImu();
             }
 
             //******************************TEST FUNCTIONS******************************

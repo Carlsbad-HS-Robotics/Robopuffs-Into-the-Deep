@@ -20,6 +20,7 @@ public class RobotHardware {
         this.teleOp = teleOp;
     } //RobotHardware functions
     public IMU imu;
+    public double angleDiff = 0;
     public HardwareMap hardwareMap;
     public DcMotor liftMotor; //port 0 E
     //Wheels
@@ -29,7 +30,7 @@ public class RobotHardware {
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
 
-    public int matDriveTime = 950; //ms it takes to travel over one mat (VERY unspecific)
+    public int matDriveTime = 1300; //ms it takes to travel over one mat (VERY unspecific)
 
     //****************************************TELEOP FUNCTIONS****************************************
 
@@ -112,23 +113,29 @@ public class RobotHardware {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
     } //drive from robot POV
-    public void fieldCentricDrive (double x, double y, double rx) {
+    public void reInitImu() {
+        double newHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        angleDiff = -newHeading;
+    } //Reinitialize IMU
+    public void fieldCentricDrive (double x, double y, double rx) { //Removed ", LinearOpMode teleop" -- if it stopped working that might be why
 
         // Read inverse IMU heading, as the IMU heading is CW positive
+
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        botHeading = botHeading+angleDiff;
 
         // Rotate the movement direction counter to the robot's rotation
         double rotX = x * Math.cos(-botHeading) + y * Math.sin(-botHeading);
         double rotY = -x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        rotX = rotX * 1.2;  // Counteract imperfect strafing
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
         robotCentricDrive(rotX,rotY,rx);
 
-    } //drive from start POV (driver POV)
+    } //from driver POV
     public void getBotHeadings() {
 
         //double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -153,6 +160,8 @@ public class RobotHardware {
     //****************************************AUTONOMOUS FUNCTIONS************************************
     public void autoMoveSquare(boolean forward, double numMats) {
         int driveTime = (int) (matDriveTime * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
+        driveTime -= 300;
+        teleOp.telemetry.addData("driveTime: ",driveTime);
 
         //determine direction of movement based on whether it's going 'forward' (true) or backward (forward == false)
         int multiplier = 1; //multiply drive speed by this to make direction positive or negative
@@ -160,6 +169,8 @@ public class RobotHardware {
             multiplier = -multiplier;
         }
 
+        teleOp.telemetry.addData("driveSpeed: ", multiplier);
+        teleOp.telemetry.update();
 
         robotCentricDrive(0, multiplier,0); //tell the robot to drive
         teleOp.sleep(driveTime); //drive for X amount of time

@@ -3,15 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous (name="Left Auto", group="Autonomous")
-public class FarAuto extends LinearOpMode {
+@Autonomous (name="Right Auto", group="Autonomous")
+public class RightAuto extends LinearOpMode {
     public void runOpMode() {
         RobotHardware roboHardware = new RobotHardware(hardwareMap, this);
         roboHardware.initialize();
 
         waitForStart();
 
-        roboHardware.autoMoveSquareSide(true,3.2);
+        //robot faces outward!
+        roboHardware.autoMoveSquareSide(false,2);
 
 
 
