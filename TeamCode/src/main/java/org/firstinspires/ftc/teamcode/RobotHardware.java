@@ -30,7 +30,7 @@ public class RobotHardware {
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
 
-    public int matDriveTime = 1300; //ms it takes to travel over one mat (VERY unspecific)
+    public int matDriveTime = 1150; //ms it takes to travel over one mat (VERY unspecific)
 
     //****************************************TELEOP FUNCTIONS****************************************
 
@@ -92,9 +92,10 @@ public class RobotHardware {
 
     } // initializes all hardware components
     public void robotCentricDrive(double x, double y, double rx) {
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        //                  right stick x, right stick y, left stick x (formerly right stick x but we switched joysticks) (I didn't wanna change the variable names)
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1); //returns the sum or 1: whichever is bigger
 
-        double frontLeftPower = (y - x - rx) / denominator;
+        double frontLeftPower = (y - x - rx) / denominator; //
         double backLeftPower = (y + x - rx) / denominator;
         double frontRightPower = (y + x + rx) / denominator;
         double backRightPower = (y - x + rx) / denominator;
@@ -160,7 +161,7 @@ public class RobotHardware {
     //****************************************AUTONOMOUS FUNCTIONS************************************
     public void autoMoveSquare(boolean forward, double numMats) {
         int driveTime = (int) (matDriveTime * numMats); //amount of time to drive one square (at 0.3 or 0.4 the speed)
-        driveTime -= 300;
+        //driveTime -= 300;
         teleOp.telemetry.addData("driveTime: ",driveTime);
 
         //determine direction of movement based on whether it's going 'forward' (true) or backward (forward == false)

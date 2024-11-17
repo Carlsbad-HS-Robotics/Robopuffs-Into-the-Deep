@@ -12,7 +12,7 @@ public class LeftAuto extends LinearOpMode {
         waitForStart();
 
         //robot faces outward!
-        roboHardware.autoMoveSquareSide(false,3);
+        roboHardware.autoMoveSquareSide(true,3);
 
 
 
