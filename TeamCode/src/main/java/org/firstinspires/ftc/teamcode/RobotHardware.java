@@ -22,7 +22,9 @@ public class RobotHardware {
     public IMU imu;
     public double angleDiff = 0;
     public HardwareMap hardwareMap;
-    public DcMotor liftMotor; //port 0 E
+    public DcMotor leftLiftMotor; //port 0 E
+    public DcMotor rightLiftMotor; //port 3 E
+
     //Wheels
     public DcMotor frontLeftMotor; // port 3
     public DcMotor frontRightMotor; // port 0
@@ -72,8 +74,10 @@ public class RobotHardware {
         initMotor(backRightMotor, false);
 
         //Lift Motor
-        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        initMotor(liftMotor, false);
+        leftLiftMotor = hardwareMap.get(DcMotor.class, "leftLiftMotor");
+        initMotor(leftLiftMotor, false);
+        rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLiftMotor");
+        initMotor(rightLiftMotor, true);
 
         //Servo
         spinServo = hardwareMap.get(Servo.class, "spinServo");
@@ -204,7 +208,7 @@ public class RobotHardware {
         return angle;
 
     } //make an angle based on 0-360 degree range
-    public void autoOdoTurn(boolean left){
+    public void autoOdoTurn(boolean left, int degrees){
 
         stopAll();
         //******************************CALCULATIONS**************************************************
@@ -216,9 +220,9 @@ public class RobotHardware {
         double targetHeading = currentHeading;
         double turnPower = -0.4;
         if (left) {
-            targetHeading += 90;
+            targetHeading += degrees;
         } else {
-            targetHeading -= 90;
+            targetHeading -= degrees;
             turnPower = 0.4;
         }
         fixAngles(targetHeading);
@@ -298,25 +302,28 @@ public class RobotHardware {
     } //stops all drive movement
     public void stopAll () {
         stopDrive();
-        liftMotor.setPower(0);
+        leftLiftMotor.setPower(0);
+        rightLiftMotor.setPower(0);
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
 
     //TODO test setArmtoEncoder function
     public void setArmtoEncoder() {
         //TODO make arm movement encoder based
-        liftMotor.setPower(0);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLiftMotor.setPower(0);
+        leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //liftMotor.setTargetPosition(0);
 
     } //set Arm mode to Encoder
+    //TODO add right arm lift motor
     //TODO test setArmtoPower function
     public void setArmtoPower() {
-        liftMotor.setPower(0);
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLiftMotor.setPower(0);
+        leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     } //set Arm mode to Power
+    //TODO add right arm lift motor
     public void switchToEncoder(DcMotor motor, boolean forward) {
         motor.setPower(0);
         //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

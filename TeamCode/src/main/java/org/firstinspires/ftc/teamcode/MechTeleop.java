@@ -16,8 +16,6 @@ get turn figured out
 @TeleOp(name="Mechanism TeleOp", group="TeleOps")
 public class MechTeleop extends LinearOpMode {
 
-    private DcMotor liftMotor;
-
     @Override
     public void runOpMode() {
 
@@ -42,13 +40,16 @@ public class MechTeleop extends LinearOpMode {
 
             //**********ARM CONTROLS**********
             if (gamepad2.right_stick_y > 0) {
-                roboHardware.liftMotor.setPower(liftMotorPower);
+                roboHardware.leftLiftMotor.setPower(liftMotorPower);
+                roboHardware.rightLiftMotor.setPower(liftMotorPower);
             } //up
             else if (gamepad2.right_stick_y < 0) {
-                roboHardware.liftMotor.setPower(-liftMotorPower);
+                roboHardware.leftLiftMotor.setPower(-liftMotorPower);
+                roboHardware.rightLiftMotor.setPower(-liftMotorPower);
             } //down
             else {
-                roboHardware.liftMotor.setPower(0);
+                roboHardware.leftLiftMotor.setPower(0);
+                roboHardware.rightLiftMotor.setPower(0);
             } //stop
 
             //**********INTAKE CONTROLS**********
