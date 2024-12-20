@@ -36,17 +36,16 @@ public class  MechTeleop extends LinearOpMode {
 
             roboHardware.fieldCentricDrive(gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
             roboHardware.getBotHeadings(); //print headings
-            //FIX left and right (reverse them)
 
             //**********ARM CONTROLS**********
             if (gamepad2.right_stick_y > 0) {
                 roboHardware.leftLiftMotor.setPower(liftMotorPower);
                 roboHardware.rightLiftMotor.setPower(liftMotorPower);
-            } //up
+            }       //RS up
             else if (gamepad2.right_stick_y < 0) {
                 roboHardware.leftLiftMotor.setPower(-liftMotorPower);
                 roboHardware.rightLiftMotor.setPower(-liftMotorPower);
-            } //down
+            }  //RS down
             else {
                 roboHardware.leftLiftMotor.setPower(0);
                 roboHardware.rightLiftMotor.setPower(0);
@@ -56,34 +55,31 @@ public class  MechTeleop extends LinearOpMode {
             if (gamepad2.dpad_down) {
                 roboHardware.spinServo.setDirection(Servo.Direction.REVERSE);
                 roboHardware.spinServo.setPosition(0);
-            } //intake
+            }       //intake
             else if (gamepad2.dpad_up) {
                 roboHardware.spinServo.setDirection(Servo.Direction.FORWARD);
                 roboHardware.spinServo.setPosition(0);
-            } //output
+            }    //output
             else {
                 roboHardware.spinServo.setPosition(0.5);
             }
 
-            if (gamepad1.right_stick_button) {
-                roboHardware.reInitImu();
-            }
-
-            //******************************EXTENDING ARM CONTROLS*****************************
+            //**********SLIDE CONTROLS**********
             if (gamepad2.left_stick_y > 0) {
                 roboHardware.extendMotor.setPower(0.8);
-            }
+            }       //Slide out
             else if (gamepad2.left_stick_y < 0) {
                 roboHardware.extendMotor.setPower(-0.8);
-            }
+            }  //Slide in
             else {
                 roboHardware.extendMotor.setPower(0);
             }
-            //down is clockwise
-            //up is counterclockwise
 
-            //counterclockwise = out = up
-            //clockwise = in = down
+            ////**********RESET IMU**********
+            if (gamepad1.right_stick_button) {
+                roboHardware.reInitImu();
+            }      //RS button
+
 
             //******************************TEST FUNCTIONS******************************
 

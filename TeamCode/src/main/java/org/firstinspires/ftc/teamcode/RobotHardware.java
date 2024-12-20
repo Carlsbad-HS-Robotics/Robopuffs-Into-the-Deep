@@ -25,15 +25,13 @@ public class RobotHardware {
     public DcMotor leftLiftMotor; //port 0 E
     public DcMotor rightLiftMotor; //port 3 E
 
-    //Wheels
+    //Wheel Motor definitions
     public DcMotor frontLeftMotor; // port 3
     public DcMotor frontRightMotor; // port 0
     public DcMotor backLeftMotor; // port 2
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
-    public DcMotor extendMotor;
-    //TODO add port for extending arm motor
-
+    public DcMotor extendMotor; //port 2 E
     public int matDriveTime = 1150; //ms it takes to travel over one mat (VERY unspecific)
 
     //****************************************TELEOP FUNCTIONS****************************************
