@@ -14,7 +14,7 @@ get turn figured out
  */
 
 @TeleOp(name="Mechanism TeleOp", group="TeleOps")
-public class MechTeleop extends LinearOpMode {
+public class  MechTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -68,6 +68,22 @@ public class MechTeleop extends LinearOpMode {
             if (gamepad1.right_stick_button) {
                 roboHardware.reInitImu();
             }
+
+            //******************************EXTENDING ARM CONTROLS*****************************
+            if (gamepad2.left_stick_y > 0) {
+                roboHardware.extendMotor.setPower(0.8);
+            }
+            else if (gamepad2.left_stick_y < 0) {
+                roboHardware.extendMotor.setPower(-0.8);
+            }
+            else {
+                roboHardware.extendMotor.setPower(0);
+            }
+            //down is clockwise
+            //up is counterclockwise
+
+            //counterclockwise = out = up
+            //clockwise = in = down
 
             //******************************TEST FUNCTIONS******************************
 

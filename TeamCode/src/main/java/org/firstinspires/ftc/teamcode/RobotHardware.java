@@ -31,6 +31,8 @@ public class RobotHardware {
     public DcMotor backLeftMotor; // port 2
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
+    public DcMotor extendMotor;
+    //TODO add port for extending arm motor
 
     public int matDriveTime = 1150; //ms it takes to travel over one mat (VERY unspecific)
 
@@ -78,6 +80,10 @@ public class RobotHardware {
         initMotor(leftLiftMotor, false);
         rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLiftMotor");
         initMotor(rightLiftMotor, true);
+
+        //Extending Arm Motor
+        extendMotor = hardwareMap.get(DcMotor.class, "extendMotor");
+        initMotor(extendMotor, true);
 
         //Servo
         spinServo = hardwareMap.get(Servo.class, "spinServo");
