@@ -33,7 +33,6 @@ public class  MechTeleop extends LinearOpMode {
 
 
             //******************************GAME FUNCTIONS******************************
-
             roboHardware.fieldCentricDrive(gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
             roboHardware.getBotHeadings(); //print headings
 
@@ -65,15 +64,9 @@ public class  MechTeleop extends LinearOpMode {
             }
 
             //**********SLIDE CONTROLS**********
-            if (gamepad2.left_stick_y > 0) {
-                roboHardware.extendMotor.setPower(0.8);
-            }       //Slide out
-            else if (gamepad2.left_stick_y < 0) {
-                roboHardware.extendMotor.setPower(-0.8);
-            }  //Slide in
-            else {
-                roboHardware.extendMotor.setPower(0);
-            }
+            double slideMultiplier = 0.3;
+            telemetry.addData("left stick:", gamepad2.left_stick_y);
+            roboHardware.extendMotor.setPower(gamepad2.left_stick_y * slideMultiplier); //Slide in / out
 
             ////**********RESET IMU**********
             if (gamepad1.right_stick_button) {
@@ -84,6 +77,7 @@ public class  MechTeleop extends LinearOpMode {
             //******************************TEST FUNCTIONS******************************
 
             //AUTO FUNCTIONS
+            /*
             if (gamepad1.dpad_up) {
                 roboHardware.autoMoveSquare(true, 1);
             } else if (gamepad1.dpad_down) {
@@ -93,9 +87,10 @@ public class  MechTeleop extends LinearOpMode {
             } else if (gamepad1.dpad_right) {
                 roboHardware.autoMoveSquareSide(false,1);
             }
+             */
 
             //TEST ARM ENCODER
-            /*
+
             //set mode
             if (gamepad2.left_bumper) {
                 roboHardware.setArmtoEncoder();
@@ -103,26 +98,29 @@ public class  MechTeleop extends LinearOpMode {
             else if (gamepad2.right_bumper) {
                 roboHardware.setArmtoPower();
             } //set Arm to Power mode
+            telemetry.addLine("Left arm motor: " + roboHardware.leftLiftMotor.getMode());
+            telemetry.addLine("Right arm motor: " + roboHardware.rightLiftMotor.getMode());
+
             //movement
             int targetPos = 0;
-            if (gamepad2.left_stick_y > 0) {
-                targetPos = roboHardware.liftMotor.getCurrentPosition();
-                //roboHardware.liftMotor.setTargetPosition(targetPos + 50);
-                roboHardware.liftMotor.setTargetPosition(100);
-                roboHardware.liftMotor.setPower(0.5);
+            if (gamepad2.right_trigger > 0) {
+                targetPos = roboHardware.leftLiftMotor.getCurrentPosition(); //get current motor position
+                //roboHardware.liftMotor.setTargetPosition(targetPos + 50);  //set target 50 ticks ahead of current position
+                roboHardware.leftLiftMotor.setTargetPosition(100);           //set target position to 100 ticks
+                roboHardware.leftLiftMotor.setPower(0.5);                   //start movement (towards goal position)
             } //up
-            else if (gamepad2.left_stick_y < 0) {
-                targetPos = roboHardware.liftMotor.getCurrentPosition();
-                //roboHardware.liftMotor.setTargetPosition(targetPos -50);
-                roboHardware.liftMotor.setTargetPosition(-100);
-                roboHardware.liftMotor.setPower(0.5);
+            else if (gamepad2.left_trigger < 0) {
+                targetPos = roboHardware.leftLiftMotor.getCurrentPosition(); //get current motor position
+                //roboHardware.liftMotor.setTargetPosition(targetPos -50);   //set target 50 ticks ahead of current position
+                roboHardware.leftLiftMotor.setTargetPosition(-100);         //set target position to -100 ticks
+                roboHardware.leftLiftMotor.setPower(-0.5);                   //start movement (towards goal position)
             } //down
             else {
-                roboHardware.liftMotor.setPower(0);
+                roboHardware.leftLiftMotor.setPower(0);                     //stop all movement
             }
 
-             */
 
+            telemetry.update(); //final updates for telemetry; displays all data added throughout the teleop loop
 
         }
     }

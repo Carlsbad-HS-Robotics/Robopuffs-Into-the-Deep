@@ -157,12 +157,12 @@ public class RobotHardware {
         /*
         Left = +
         Right = -
-        */
+        */ //Directions
 
         //Angle Displays
         teleOp.telemetry.addData("DEGREES", "");
         teleOp.telemetry.addData("Current Heading: ", currentDegreeHeading);
-        teleOp.telemetry.update();
+        //teleOp.telemetry.update(); //Took this out because update line is in telemetry
     } //Prints robot headings out on the drive hub
 
 
@@ -311,27 +311,26 @@ public class RobotHardware {
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
 
-    //TODO test setArmtoEncoder function
+
     public void setArmtoEncoder() {
         //TODO make arm movement encoder based
         leftLiftMotor.setPower(0);
+        rightLiftMotor.setPower(0);
         leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //liftMotor.setTargetPosition(0);
+        rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //leftLiftMotor.setTargetPosition(0);
+        //rightLiftMotor.setTargetPosition(0);
 
     } //set Arm mode to Encoder
-    //TODO add right arm lift motor
-    //TODO test setArmtoPower function
     public void setArmtoPower() {
         leftLiftMotor.setPower(0);
+        rightLiftMotor.setPower(0);
         leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    } //set Arm mode to Power
-    //TODO add right arm lift motor
-    public void switchToEncoder(DcMotor motor, boolean forward) {
-        motor.setPower(0);
-        //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    } //switches a motor to encoder movement
+        rightLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    } //set Arm Motors mode to Power
 
 } //class RobotHardware
