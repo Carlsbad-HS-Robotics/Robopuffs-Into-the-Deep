@@ -3,6 +3,7 @@ Robopuffs 2024-2025: Into the Deep
 Author: Brielle McBarron
  */
 
+//Imports: brings in a bunch of different commands and objects we can use
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 public class RobotHardware {
+
+    //FIRST: define all objects
     public LinearOpMode teleOp;
     public RobotHardware (HardwareMap hardwareMap, LinearOpMode teleOp) {
         this.hardwareMap = hardwareMap;
@@ -21,21 +24,27 @@ public class RobotHardware {
     } //RobotHardware functions
     public IMU imu;
     public double angleDiff = 0;
+    //TODO add a 180 difference? to fix field centric
     public HardwareMap hardwareMap;
+
+    //Define all components that we control with their type & name (I also like to put ports for convenience)
     public DcMotor leftLiftMotor; //port 0 E
     public DcMotor rightLiftMotor; //port 3 E
-
-    //Wheel Motor definitions
     public DcMotor frontLeftMotor; // port 3
     public DcMotor frontRightMotor; // port 0
     public DcMotor backLeftMotor; // port 2
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
     public DcMotor extendMotor; //port 2 E
+
+    //You can also add variables (like I did below)
     public int matDriveTime = 1150; //ms it takes to travel over one mat (VERY unspecific)
 
     //****************************************TELEOP FUNCTIONS****************************************
-
+    /*
+    Below are a bunch of functions (or methods) created by me (human). You can refer to these throughout this file or in other files
+    such as MechTeleop by saying roboHardware.[method name]([parameters])
+    */
     //TODO if encoders work for arm, use this function; if not, delete
     public void initEncoderMotor (DcMotor motor, boolean forward) {
         motor.setPower(0);
@@ -47,10 +56,10 @@ public class RobotHardware {
             motor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
-        //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    } //initialize an encoder motor
+    } //initializes an encoder motor
     public void initMotor(DcMotor motor, boolean forward) {
 
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -75,20 +84,24 @@ public class RobotHardware {
 
         //Lift Motor
         leftLiftMotor = hardwareMap.get(DcMotor.class, "leftLiftMotor");
-        initMotor(leftLiftMotor, false);
         rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLiftMotor");
-        initMotor(rightLiftMotor, true);
+        initEncoderMotor(leftLiftMotor, false);
+        initEncoderMotor(rightLiftMotor, true);
+        leftLiftMotor.setTargetPosition(leftLiftMotor.getCurrentPosition());
+        rightLiftMotor.setTargetPosition(rightLiftMotor.getCurrentPosition());
 
         //Extending Arm Motor
         extendMotor = hardwareMap.get(DcMotor.class, "extendMotor");
-        initMotor(extendMotor, true);
+        initEncoderMotor(extendMotor, false);
+        extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
+
 
         //Servo
         spinServo = hardwareMap.get(Servo.class, "spinServo");
         spinServo.setDirection(Servo.Direction.REVERSE);
         spinServo.scaleRange(0, 1);
 
-        //IMU
+        //IMU - the IMU (Inertial Measurement Unit) is how the robot senses its direction/ orientation
         imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
@@ -103,7 +116,7 @@ public class RobotHardware {
         //                  right stick x, right stick y, left stick x (formerly right stick x but we switched joysticks) (I didn't wanna change the variable names)
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1); //returns the sum or 1: whichever is bigger
 
-        double frontLeftPower = (y - x - rx) / denominator; //
+        double frontLeftPower = (y - x - rx) / denominator;
         double backLeftPower = (y + x - rx) / denominator;
         double frontRightPower = (y + x + rx) / denominator;
         double backRightPower = (y - x + rx) / denominator;
@@ -125,7 +138,7 @@ public class RobotHardware {
     public void reInitImu() {
         double newHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         angleDiff = -newHeading;
-    } //Reinitialize IMU
+    } //Reinitialize IMU (resets direction that field centric is based off of-- resets which way "front" is)
     public void fieldCentricDrive (double x, double y, double rx) { //Removed ", LinearOpMode teleop" -- if it stopped working that might be why
 
         // Read inverse IMU heading, as the IMU heading is CW positive
@@ -144,7 +157,7 @@ public class RobotHardware {
         // but only if at least one is out of the range [-1, 1]
         robotCentricDrive(rotX,rotY,rx);
 
-    } //from driver POV
+    } //from driver POV (front is one direction, no matter which way robot is facing)
     public void getBotHeadings() {
 
         //double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -163,7 +176,7 @@ public class RobotHardware {
         teleOp.telemetry.addData("DEGREES", "");
         teleOp.telemetry.addData("Current Heading: ", currentDegreeHeading);
         //teleOp.telemetry.update(); //Took this out because update line is in telemetry
-    } //Prints robot headings out on the drive hub
+    } //Prints robot headings out to the driver hub screen
 
 
     //****************************************AUTONOMOUS FUNCTIONS************************************
