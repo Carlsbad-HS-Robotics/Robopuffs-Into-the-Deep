@@ -47,27 +47,24 @@ public class  MechTeleop extends LinearOpMode {
             roboHardware.getBotHeadings(); //print headings
 
             //**********ARM CONTROLS**********
+            //roboHardware.presetArmLifting(gamepad2.right_bumper, gamepad2.left_bumper); //Arm controls
 
-            if (gamepad2.right_bumper) {
-                roboHardware.leftLiftMotor.setTargetPosition(1000);
-                roboHardware.rightLiftMotor.setTargetPosition(1000);
-            } else if (gamepad2.left_bumper) {
-                roboHardware.leftLiftMotor.setTargetPosition(0);
-                roboHardware.rightLiftMotor.setTargetPosition(0);
+            int increment = 20;
+            if (gamepad2.right_stick_y < 0) {
+                roboHardware.leftLiftMotor.setTargetPosition(roboHardware.leftLiftMotor.getCurrentPosition() + increment);
+                roboHardware.rightLiftMotor.setTargetPosition(roboHardware.rightLiftMotor.getCurrentPosition() + increment);
+            } else if (gamepad2.right_stick_y > 0) {
+                roboHardware.leftLiftMotor.setTargetPosition(roboHardware.leftLiftMotor.getCurrentPosition() - increment);
+                roboHardware.rightLiftMotor.setTargetPosition(roboHardware.rightLiftMotor.getCurrentPosition() - increment);
+            } else {
+                roboHardware.leftLiftMotor.setTargetPosition(roboHardware.leftLiftMotor.getCurrentPosition());
+                roboHardware.rightLiftMotor.setTargetPosition(roboHardware.rightLiftMotor.getCurrentPosition());
             }
 
             roboHardware.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             roboHardware.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             roboHardware.leftLiftMotor.setPower(0.5);
             roboHardware.rightLiftMotor.setPower(0.5);
-
-            if (gamepad2.x) {
-                roboHardware.leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                roboHardware.rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                telemetry.addLine("Reset Encoder");
-            } //STOP & RESET ENCODER BUTTON
-
-
 
             //**********INTAKE CONTROLS**********
             if (gamepad2.dpad_down) {
@@ -83,28 +80,14 @@ public class  MechTeleop extends LinearOpMode {
             }
 
             //**********SLIDE CONTROLS**********
-            if (gamepad2.y) {
-                roboHardware.extendMotor.setTargetPosition(200);
-            } else if (gamepad2.b) {
-                roboHardware.extendMotor.setTargetPosition(0);
-            }
-            telemetry.addData("Current Pos:", roboHardware.extendMotor.getCurrentPosition());
-
-            roboHardware.extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            roboHardware.extendMotor.setPower(0.5);
-
-            if (gamepad2.x) {
-                roboHardware.extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                telemetry.addLine("Reset Encoder");
-            } //STOP & RESET ENCODER BUTTON
-
-
+            double slideMultiplier = -0.3;
+            telemetry.addData("Extension Motor Ticks: " , roboHardware.extendMotor.getCurrentPosition());
+            roboHardware.extendMotor.setPower(gamepad2.left_stick_y * slideMultiplier); //Slide in / out
 
             ////**********RESET IMU**********
             if (gamepad1.right_stick_button) {
                 roboHardware.reInitImu();
             }      //RS button
-
 
             //******************************TEST FUNCTIONS******************************
 
@@ -120,7 +103,6 @@ public class  MechTeleop extends LinearOpMode {
                 roboHardware.autoMoveSquareSide(false,1);
             }
              */
-
 
             telemetry.update(); //final updates for telemetry; displays all data added throughout the teleop loop
 

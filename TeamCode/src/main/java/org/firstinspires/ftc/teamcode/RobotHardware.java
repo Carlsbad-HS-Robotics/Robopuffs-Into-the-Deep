@@ -139,7 +139,8 @@ public class RobotHardware {
         double newHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         angleDiff = -newHeading;
     } //Reinitialize IMU (resets direction that field centric is based off of-- resets which way "front" is)
-    public void fieldCentricDrive (double x, double y, double rx) { //Removed ", LinearOpMode teleop" -- if it stopped working that might be why
+    public void fieldCentricDrive (double x, double y, double rx) {
+        //Removed ", LinearOpMode teleop" -- if it stopped working that might be why
 
         // Read inverse IMU heading, as the IMU heading is CW positive
 
@@ -178,6 +179,39 @@ public class RobotHardware {
         //teleOp.telemetry.update(); //Took this out because update line is in telemetry
     } //Prints robot headings out to the driver hub screen
 
+    public void presetArmLifting(boolean RB, boolean LB) {
+
+        if (RB) {
+            leftLiftMotor.setTargetPosition(1000);
+            rightLiftMotor.setTargetPosition(1000);
+        } else if (LB) {
+            leftLiftMotor.setTargetPosition(0);
+            rightLiftMotor.setTargetPosition(0);
+        }
+
+        leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLiftMotor.setPower(0.5);
+        rightLiftMotor.setPower(0.5);
+
+    }
+
+    public void powerArmLifting(double y) {
+
+        leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if (y > 0) {
+            leftLiftMotor.setPower(0.5);
+            rightLiftMotor.setPower(0.5);
+        } else if (y < 0) {
+            leftLiftMotor.setPower(-0.5);
+            rightLiftMotor.setPower(-0.5);
+        } else {
+            leftLiftMotor.setPower(0);
+            rightLiftMotor.setPower(0);
+        }
+    }
 
     //****************************************AUTONOMOUS FUNCTIONS************************************
     public void autoMoveSquare(boolean forward, double numMats) {
@@ -324,19 +358,6 @@ public class RobotHardware {
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
 
-
-    public void setArmtoEncoder() {
-        //TODO make arm movement encoder based
-        leftLiftMotor.setPower(0);
-        rightLiftMotor.setPower(0);
-        leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //leftLiftMotor.setTargetPosition(0);
-        //rightLiftMotor.setTargetPosition(0);
-
-    } //set Arm mode to Encoder
     public void setArmtoPower() {
         leftLiftMotor.setPower(0);
         rightLiftMotor.setPower(0);
