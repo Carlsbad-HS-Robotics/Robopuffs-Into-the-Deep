@@ -95,7 +95,6 @@ public class RobotHardware {
         initEncoderMotor(extendMotor, false);
         extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
 
-
         //Servo
         spinServo = hardwareMap.get(Servo.class, "spinServo");
         spinServo.setDirection(Servo.Direction.REVERSE);
@@ -184,10 +183,11 @@ public class RobotHardware {
         if (RB) {
             leftLiftMotor.setTargetPosition(1000);
             rightLiftMotor.setTargetPosition(1000);
-        } else if (LB) {
+        } //up
+        else if (LB) {
             leftLiftMotor.setTargetPosition(0);
             rightLiftMotor.setTargetPosition(0);
-        }
+        } //down
 
         leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -345,6 +345,16 @@ public class RobotHardware {
         teleOp.sleep(1000);
 
     } //turn based on odometry
+    public void autoArmLift (int target) {
+
+        leftLiftMotor.setTargetPosition(target);
+        rightLiftMotor.setTargetPosition(target);
+
+        leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLiftMotor.setPower(0.5);
+        rightLiftMotor.setPower(0.5);
+    }
     public void stopDrive() {
         frontRightMotor.setPower(0);
         frontLeftMotor.setPower(0);

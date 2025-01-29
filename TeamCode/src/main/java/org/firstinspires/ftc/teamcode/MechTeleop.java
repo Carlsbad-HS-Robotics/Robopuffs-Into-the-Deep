@@ -24,26 +24,9 @@ public class  MechTeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             //******************************GAME FUNCTIONS******************************
-            roboHardware.fieldCentricDrive(-gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
-            /*
-            if (fieldFailed = false) {
-                roboHardware.fieldCentricDrive(-gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
-                telemetry.addData("Drive mode:", "field centric");
-            } else if (fieldFailed = true) {
-                roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
-                telemetry.addData("Drive mode:", "robot centric");
-            } else {
-                roboHardware.fieldCentricDrive(-gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
-                telemetry.addData("Drive mode:", "field centric");
-            }
-
-            if (gamepad1.right_bumper) {
-                fieldFailed = true;
-            } else if (gamepad1.left_bumper) {
-                fieldFailed = false;
-            }
-
-             */ //TODO fix field centric
+            //roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
+            //TODO fix field centric
+            roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
             roboHardware.getBotHeadings(); //print headings
 
             //**********ARM CONTROLS**********
