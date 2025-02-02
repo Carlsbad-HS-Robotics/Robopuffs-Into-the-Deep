@@ -21,25 +21,22 @@ public class EncoderTest extends LinearOpMode {
         //double liftMotorPower = 0.3;
         double liftMotorPower = 0.35;
 
+        roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
+
         while (opModeIsActive()) {
 
             //******************************GAME FUNCTIONS******************************
-            roboHardware.fieldCentricDrive(-gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x);
+            roboHardware.robotCentricDrive(gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x);
 
-            if (gamepad2.y) {
-                roboHardware.extendMotor.setTargetPosition(100);
-            } else if (gamepad2.b) {
-                roboHardware.extendMotor.setTargetPosition(0);
-            }
+            roboHardware.presetSlideLift(gamepad2.y, gamepad2.x, gamepad2.a);
+            telemetry.addData("Current Encoder Position:", roboHardware.extendMotor.getCurrentPosition());
 
-            roboHardware.extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            roboHardware.extendMotor.setPower(0.5);
 
-            if (gamepad2.x) {
+
+            if (gamepad2.left_stick_button) {
                 roboHardware.extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 telemetry.addLine("Reset Encoder");
             } //STOP & RESET ENCODER BUTTON
-
 
 
             telemetry.update(); //final updates for telemetry; displays all data added throughout the teleop loop

@@ -46,7 +46,7 @@ public class RobotHardware {
     /*
     Below are a bunch of functions (or methods) created by me (human). You can refer to these throughout this file or in other files
     such as MechTeleop by saying roboHardware.[method name]([parameters])
-    */
+    */ //DESCRIPTION
     public void initEncoderMotor (DcMotor motor, boolean forward) {
         motor.setPower(0);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -59,6 +59,7 @@ public class RobotHardware {
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setTargetPosition(motor.getCurrentPosition());
 
     } //initializes an encoder motor
     public void initMotor(DcMotor motor, boolean forward) {
@@ -107,6 +108,8 @@ public class RobotHardware {
     public void robotCentricDrive(double x, double y, double rx) {
         //                  right stick x, right stick y, left stick x (formerly right stick x but we switched joysticks) (I didn't wanna change the variable names)
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1); //returns the sum or 1: whichever is bigger
+
+        x = -x;
 
         double frontLeftPower = (y - x - rx) / denominator;
         double backLeftPower = (y + x - rx) / denominator;
@@ -171,27 +174,30 @@ public class RobotHardware {
         //teleOp.telemetry.update(); //Took this out because update line is in telemetry
     } //Prints robot headings out to the driver hub screen
 
-    public void presetSlideLift(boolean RB, boolean LB) {
+    public void presetSlideLift(boolean y, boolean x, boolean a) {
 
-        if (RB) {
-            extendMotor.setTargetPosition(100);
-        }
-        else if (LB) {
+        if (y) {
+            extendMotor.setTargetPosition(8000);
+        } //top
+        else if (x) {
+            extendMotor.setTargetPosition(4000);
+        } //low
+        else if (a) {
             extendMotor.setTargetPosition(0);
-        }
+        } //bottom
 
         extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         extendMotor.setPower(0.5);
 
     }
 
-    public void powerSlideLift(double y) {
+    public void powerSlideLift(boolean RB, boolean LB) {
         extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if (y>0) {
+        if (RB) {
             extendMotor.setPower(0.5);
         }
-        else if (y<0) {
+        else if (LB) {
             extendMotor.setPower(-0.5);
         }
         else {

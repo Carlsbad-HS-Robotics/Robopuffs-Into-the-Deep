@@ -24,9 +24,7 @@ public class Level1Ascent extends LinearOpMode{
         //TODO score in net zone or low basket?
         roboHardware.autoMoveSquare(true,0.5);                          //go forward 0.1 mat
         sleep(300);
-        roboHardware.leftLiftMotor.setPower(0.3); //TODO is this the right direction
         sleep(1000); //TODO see if this needs to be longer or shorter
-        roboHardware.leftLiftMotor.setPower(0);                                            //raise arm (with preloaded sample)
         roboHardware.autoMoveSquareSide(true,1.5);                        //go left 1.5 mats
         roboHardware.autoOdoTurn(true,45);                                 //turn left 45 degrees
         roboHardware.autoMoveSquareSide(true,0.3);                        //move left 0.5 mats

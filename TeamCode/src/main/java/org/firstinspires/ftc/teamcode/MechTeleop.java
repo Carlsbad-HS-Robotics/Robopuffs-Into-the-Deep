@@ -20,52 +20,48 @@ public class  MechTeleop extends LinearOpMode {
 
         waitForStart();
 
-        double liftMotorPower = 0.35; //multiplied by stick value so max value is 0.5 power (0.5 * 1 = 0.5)
+        roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
 
         while (opModeIsActive()) {
             //******************************GAME FUNCTIONS******************************
+
+            //**********DRIVE**********
             //roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
             //TODO fix field centric
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
-            roboHardware.getBotHeadings(); //print headings
+            //roboHardware.getBotHeadings(); //print headings
 
-            //**********SLIDE CONTROLS**********
-            //roboHardware.presetSlideLift(gamepad2.right_bumper, gamepad2.left_bumper);
-            int increment = 20; //increment by which the motor turns; how many ticks
-            if (gamepad2.right_stick_y < 0) {
-                roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition() + increment);
-            } else if (gamepad2.right_stick_y > 0) {
-                roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition() - increment);
-            } else {
-                roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
-            }
-            roboHardware.extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            roboHardware.extendMotor.setPower(0.5);
+            //**********SLIDES**********
+            roboHardware.presetSlideLift(gamepad2.y, gamepad2.x, gamepad2.a);       // High, Low, Bottom
+            telemetry.addData("Current Encoder Position:", roboHardware.extendMotor.getCurrentPosition());
 
-            //**********INTAKE CONTROLS**********
+            //**********INTAKE**********
             if (gamepad2.dpad_down) {
                 roboHardware.spinServo.setDirection(Servo.Direction.REVERSE);
                 roboHardware.spinServo.setPosition(0);
-            }       //intake
+            }            //intake
             else if (gamepad2.dpad_up) {
                 roboHardware.spinServo.setDirection(Servo.Direction.FORWARD);
                 roboHardware.spinServo.setPosition(0);
-            }    //output
+            }         //output
             else {
                 roboHardware.spinServo.setPosition(0.5);
             }
 
-            //**********SLIDE CONTROLS**********
-            double slideMultiplier = -0.3;
-            telemetry.addData("Extension Motor Ticks: " , roboHardware.extendMotor.getCurrentPosition());
-            roboHardware.extendMotor.setPower(gamepad2.left_stick_y * slideMultiplier); //Slide in / out
-
             ////**********RESET IMU**********
             if (gamepad1.right_stick_button) {
                 roboHardware.reInitImu();
-            }      //RS button
+            }   //RS button
 
             //******************************TEST FUNCTIONS******************************
+
+            //POWER SLIDE CONTROLS
+            /*
+            //**********POWER SLIDE CONTROLS**********
+            double slideMultiplier = 0.4;
+            telemetry.addData("Extension Motor Ticks: " , roboHardware.extendMotor.getCurrentPosition());
+            roboHardware.extendMotor.setPower(gamepad2.left_stick_y * slideMultiplier); //Slide in & out
+             */
 
             //AUTO FUNCTIONS
             /*
