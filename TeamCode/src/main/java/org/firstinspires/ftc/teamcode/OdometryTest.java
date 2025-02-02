@@ -21,13 +21,25 @@ public class OdometryTest extends LinearOpMode {
         roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
 
         while (opModeIsActive()) {
-
-            //******************************GAME FUNCTIONS******************************
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x);
+            //******************************ODOMETRY******************************
+
+            /*
+            //NOTES
+
+            //The X pod (back/forth) should increase in count when the robot is moved forward
+            //The Y pod (side/side) should increase when the robot is moved to the left.
+
+            //2000 Countable Events per Revolution
+
+             */
 
 
+
+
+
+            //********************************************************************
             telemetry.update(); //final updates for telemetry; displays all data added throughout the teleop loop
-
         }
     }
 }
