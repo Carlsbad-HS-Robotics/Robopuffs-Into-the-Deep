@@ -29,25 +29,18 @@ public class  MechTeleop extends LinearOpMode {
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
             roboHardware.getBotHeadings(); //print headings
 
-            //**********ARM CONTROLS**********
-            //roboHardware.presetArmLifting(gamepad2.right_bumper, gamepad2.left_bumper); //Arm controls
-
-            int increment = 20;
+            //**********SLIDE CONTROLS**********
+            //roboHardware.presetSlideLift(gamepad2.right_bumper, gamepad2.left_bumper);
+            int increment = 20; //increment by which the motor turns; how many ticks
             if (gamepad2.right_stick_y < 0) {
-                roboHardware.leftLiftMotor.setTargetPosition(roboHardware.leftLiftMotor.getCurrentPosition() + increment);
-                roboHardware.rightLiftMotor.setTargetPosition(roboHardware.rightLiftMotor.getCurrentPosition() + increment);
+                roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition() + increment);
             } else if (gamepad2.right_stick_y > 0) {
-                roboHardware.leftLiftMotor.setTargetPosition(roboHardware.leftLiftMotor.getCurrentPosition() - increment);
-                roboHardware.rightLiftMotor.setTargetPosition(roboHardware.rightLiftMotor.getCurrentPosition() - increment);
+                roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition() - increment);
             } else {
-                roboHardware.leftLiftMotor.setTargetPosition(roboHardware.leftLiftMotor.getCurrentPosition());
-                roboHardware.rightLiftMotor.setTargetPosition(roboHardware.rightLiftMotor.getCurrentPosition());
+                roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
             }
-
-            roboHardware.leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            roboHardware.rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            roboHardware.leftLiftMotor.setPower(0.5);
-            roboHardware.rightLiftMotor.setPower(0.5);
+            roboHardware.extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            roboHardware.extendMotor.setPower(0.5);
 
             //**********INTAKE CONTROLS**********
             if (gamepad2.dpad_down) {

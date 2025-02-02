@@ -28,14 +28,16 @@ public class RobotHardware {
     public HardwareMap hardwareMap;
 
     //Define all components that we control with their type & name (I also like to put ports for convenience)
-    public DcMotor leftLiftMotor; //port 0 E
-    public DcMotor rightLiftMotor; //port 3 E
+
+    //Wheels
     public DcMotor frontLeftMotor; // port 3
     public DcMotor frontRightMotor; // port 0
     public DcMotor backLeftMotor; // port 2
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
+    //Servo that spins the wheel for intake
     public DcMotor extendMotor; //port 2 E
+    //Motor that extends the slides
 
     //You can also add variables (like I did below)
     public int matDriveTime = 1150; //ms it takes to travel over one mat (VERY unspecific)
@@ -45,7 +47,6 @@ public class RobotHardware {
     Below are a bunch of functions (or methods) created by me (human). You can refer to these throughout this file or in other files
     such as MechTeleop by saying roboHardware.[method name]([parameters])
     */
-    //TODO if encoders work for arm, use this function; if not, delete
     public void initEncoderMotor (DcMotor motor, boolean forward) {
         motor.setPower(0);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -82,15 +83,7 @@ public class RobotHardware {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         initMotor(backRightMotor, false);
 
-        //Lift Motor
-        leftLiftMotor = hardwareMap.get(DcMotor.class, "leftLiftMotor");
-        rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLiftMotor");
-        initEncoderMotor(leftLiftMotor, false);
-        initEncoderMotor(rightLiftMotor, true);
-        leftLiftMotor.setTargetPosition(leftLiftMotor.getCurrentPosition());
-        rightLiftMotor.setTargetPosition(rightLiftMotor.getCurrentPosition());
-
-        //Extending Arm Motor
+        //Slide Extension Motor
         extendMotor = hardwareMap.get(DcMotor.class, "extendMotor");
         initEncoderMotor(extendMotor, false);
         extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
@@ -178,38 +171,31 @@ public class RobotHardware {
         //teleOp.telemetry.update(); //Took this out because update line is in telemetry
     } //Prints robot headings out to the driver hub screen
 
-    public void presetArmLifting(boolean RB, boolean LB) {
+    public void presetSlideLift(boolean RB, boolean LB) {
 
         if (RB) {
-            leftLiftMotor.setTargetPosition(1000);
-            rightLiftMotor.setTargetPosition(1000);
-        } //up
+            extendMotor.setTargetPosition(100);
+        }
         else if (LB) {
-            leftLiftMotor.setTargetPosition(0);
-            rightLiftMotor.setTargetPosition(0);
-        } //down
+            extendMotor.setTargetPosition(0);
+        }
 
-        leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLiftMotor.setPower(0.5);
-        rightLiftMotor.setPower(0.5);
+        extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendMotor.setPower(0.5);
 
     }
 
-    public void powerArmLifting(double y) {
+    public void powerSlideLift(double y) {
+        extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        if (y > 0) {
-            leftLiftMotor.setPower(0.5);
-            rightLiftMotor.setPower(0.5);
-        } else if (y < 0) {
-            leftLiftMotor.setPower(-0.5);
-            rightLiftMotor.setPower(-0.5);
-        } else {
-            leftLiftMotor.setPower(0);
-            rightLiftMotor.setPower(0);
+        if (y>0) {
+            extendMotor.setPower(0.5);
+        }
+        else if (y<0) {
+            extendMotor.setPower(-0.5);
+        }
+        else {
+            extendMotor.setPower(0);
         }
     }
 
@@ -345,15 +331,10 @@ public class RobotHardware {
         teleOp.sleep(1000);
 
     } //turn based on odometry
-    public void autoArmLift (int target) {
-
-        leftLiftMotor.setTargetPosition(target);
-        rightLiftMotor.setTargetPosition(target);
-
-        leftLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLiftMotor.setPower(0.5);
-        rightLiftMotor.setPower(0.5);
+    public void autoSlideLift (int target) {
+        extendMotor.setTargetPosition(target);
+        extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendMotor.setPower(0.5);
     }
     public void stopDrive() {
         frontRightMotor.setPower(0);
@@ -363,18 +344,9 @@ public class RobotHardware {
     } //stops all drive movement
     public void stopAll () {
         stopDrive();
-        leftLiftMotor.setPower(0);
-        rightLiftMotor.setPower(0);
+        extendMotor.setPower(0);
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
 
-    public void setArmtoPower() {
-        leftLiftMotor.setPower(0);
-        rightLiftMotor.setPower(0);
-        leftLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    } //set Arm Motors mode to Power
 
 } //class RobotHardware

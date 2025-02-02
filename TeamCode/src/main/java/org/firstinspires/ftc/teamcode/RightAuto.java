@@ -13,7 +13,6 @@ public class RightAuto extends LinearOpMode {
 
         sleep(2000);
         //robot faces outward!
-        roboHardware.autoArmLift(100);
         sleep(1000);
         roboHardware.autoMoveSquareSide(true,2);
 

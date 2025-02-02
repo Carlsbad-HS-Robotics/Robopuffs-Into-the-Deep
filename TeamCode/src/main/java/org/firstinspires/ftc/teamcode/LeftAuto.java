@@ -14,7 +14,6 @@ public class LeftAuto extends LinearOpMode {
         //put on the left edge of the left square (align with submersible cage left bottom corner)
         sleep(2000);
         //robot faces outward!
-        roboHardware.autoArmLift(100);
         sleep(1000);
         roboHardware.autoMoveSquareSide(true,3.5);
 

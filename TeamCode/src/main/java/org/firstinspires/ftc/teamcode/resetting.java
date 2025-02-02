@@ -25,7 +25,6 @@ public class resetting extends LinearOpMode {
 
             //******************************GAME FUNCTIONS******************************
             roboHardware.fieldCentricDrive(-gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x);
-            roboHardware.powerArmLifting(gamepad2.right_stick_y);
 
         }
     }
