@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Mechanism TeleOp", group="TeleOps")
-public class  MechTeleop extends LinearOpMode {
+public class MechTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {

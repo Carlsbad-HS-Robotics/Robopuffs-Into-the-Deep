@@ -34,6 +34,33 @@ public class OdometryTest extends LinearOpMode {
 
              */
 
+            sleep(800); //wait for a few seconds
+
+
+            //TODO: get odometry pod inputs: what is the starting value
+
+            double posX1; //starting x position
+            double posY1; //starting y position
+            double theta1; //starting heading
+
+            roboHardware.autoMoveSquareSide(false, 1); // move robot to the side
+
+            double posX2; //ending x position
+            double posY2; //ending y position
+            double theta2; //ending heading
+
+            telemetry.addData("Starting X:", posX1);
+            telemetry.addData("Starting Y:", posY1);
+            telemetry.addData("Starting heading:", theta1);
+            telemetry.addLine();
+            telemetry.addData("Starting X:", posX2);
+            telemetry.addData("Starting Y:", posY2);
+            telemetry.addData("Starting heading:", theta2);
+
+            sleep(2000);
+
+            //TODO: get x & y values
+
 
 
 

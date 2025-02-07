@@ -22,7 +22,9 @@ public class RobotHardware {
         this.hardwareMap = hardwareMap;
         this.teleOp = teleOp;
     } //RobotHardware functions
-    public IMU imu;
+    public IMU imu; //Port 12C Bus 0
+    //internal REV IMU
+
     public double angleDiff = 0;
     //TODO add a 180 difference? to fix field centric
     public HardwareMap hardwareMap;
