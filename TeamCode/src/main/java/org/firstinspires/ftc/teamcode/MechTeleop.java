@@ -32,7 +32,10 @@ public class MechTeleop extends LinearOpMode {
             //roboHardware.getBotHeadings(); //print headings
 
             //**********SLIDES**********
-            roboHardware.presetSlideLift(gamepad2.y, gamepad2.x, gamepad2.a);       // High, Low, Bottom
+            roboHardware.rangedSlideLift(gamepad2.right_stick_y);
+
+
+            //roboHardware.presetSlideLift(gamepad2.y, gamepad2.x, gamepad2.a);       // High, Low, Bottom
             telemetry.addData("Current Encoder Position:", roboHardware.extendMotor.getCurrentPosition());
 
             //**********INTAKE**********

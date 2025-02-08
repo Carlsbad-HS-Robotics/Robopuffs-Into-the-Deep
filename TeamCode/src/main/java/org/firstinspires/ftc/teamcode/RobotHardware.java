@@ -14,6 +14,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
+import java.util.Locale;
+
 public class RobotHardware {
 
     //FIRST: define all objects
@@ -40,6 +46,8 @@ public class RobotHardware {
     //Servo that spins the wheel for intake
     public DcMotor extendMotor; //port 2 E
     //Motor that extends the slides
+
+    //public GoBildaPinpointDriver odo;
 
     //You can also add variables (like I did below)
     public int matDriveTime = 1150; //ms it takes to travel over one mat (VERY unspecific)
@@ -88,7 +96,7 @@ public class RobotHardware {
 
         //Slide Extension Motor
         extendMotor = hardwareMap.get(DcMotor.class, "extendMotor");
-        initEncoderMotor(extendMotor, false);
+        initEncoderMotor(extendMotor, true);
         extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
 
         //Servo
@@ -193,18 +201,21 @@ public class RobotHardware {
 
     }
 
-    public void powerSlideLift(boolean RB, boolean LB) {
-        extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void rangedSlideLift(double y) {
 
-        if (RB) {
-            extendMotor.setPower(0.5);
+        if (y > 0) {
+            extendMotor.setTargetPosition(extendMotor.getCurrentPosition() + 10);
         }
-        else if (LB) {
-            extendMotor.setPower(-0.5);
+        else if (y < 0) {
+            extendMotor.setTargetPosition(extendMotor.getCurrentPosition() - 10);
         }
         else {
-            extendMotor.setPower(0);
+            extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
         }
+
+        extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendMotor.setPower(0.5);
+
     }
 
     //****************************************AUTONOMOUS FUNCTIONS************************************
