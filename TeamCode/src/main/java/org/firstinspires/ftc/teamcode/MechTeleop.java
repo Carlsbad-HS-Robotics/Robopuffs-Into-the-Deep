@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import java.util.Locale;
 
 @TeleOp(name="Mechanism TeleOp", group="TeleOps")
 public class MechTeleop extends LinearOpMode {
@@ -28,9 +32,7 @@ public class MechTeleop extends LinearOpMode {
 
             //**********DRIVE**********
             //roboHardware.fieldCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x); //drive
-            //TODO fix field centric
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
-            //roboHardware.getBotHeadings(); //print headings
 
             //**********SLIDES**********
             int increment = 20; //increment by which the motor turns; how many ticks
@@ -74,9 +76,23 @@ public class MechTeleop extends LinearOpMode {
             }   //RS button
 
             //**********ODOMETRY VALUES**********
-            telemetry.addData("X offset", roboHardware.odo.getXOffset()); //output X position relative to starting pos
-            telemetry.addData("Y offset", roboHardware.odo.getYOffset()); //output Y position relative to starting pos
-            telemetry.addData("Device Scalar", roboHardware.odo.getYawScalar());
+            roboHardware.odo.update(); //gets new data from odometry pods
+            telemetry.addLine("POSITIONS IN MM");
+            telemetry.addLine();
+            telemetry.addData("Pose2D position: ", roboHardware.odo.getPosition());
+            telemetry.addData("X position: ", roboHardware.odo.getPosX()); //X position in mm relative to starting pos
+            telemetry.addData("Y position: ", roboHardware.odo.getPosY()); //Y position in mm relative to starting pos
+            telemetry.addData("Heading: ", roboHardware.odo.getHeading());
+            telemetry.addLine();
+            /*
+            telemetry.addLine("POSITIONS IN INCHES");
+            telemetry.addLine();
+            telemetry.addData("Pose2D position: ", roboHardware.odo.getPosition());
+            telemetry.addData("X position: ", roboHardware.odo.getPosX()); //X position in mm relative to starting pos
+            telemetry.addData("Y position: ", roboHardware.odo.getPosY()); //Y position in mm relative to starting pos
+            telemetry.addData("Heading: ", roboHardware.odo.getHeading());
+            telemetry.addLine();
+             */
 
             //******************************TEST FUNCTIONS******************************
 
