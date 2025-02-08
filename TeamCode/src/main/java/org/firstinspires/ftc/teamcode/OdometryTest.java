@@ -15,10 +15,12 @@ public class OdometryTest extends LinearOpMode {
         telemetry.addData("Status:", "Initialized!");
         telemetry.update();
         waitForStart();
-        //double liftMotorPower = 0.3;
-        double liftMotorPower = 0.35;
 
-        roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
+
+        double liftMotorPower = 0.35;
+        roboHardware.leftExtendMotor.setTargetPosition(roboHardware.leftExtendMotor.getCurrentPosition());
+        roboHardware.rightExtendMotor.setTargetPosition(roboHardware.rightExtendMotor.getCurrentPosition());
+
 
         while (opModeIsActive()) {
             roboHardware.robotCentricDrive(gamepad1.right_stick_x, -gamepad1.right_stick_y, gamepad1.left_stick_x);

@@ -20,7 +20,8 @@ public class MechTeleop extends LinearOpMode {
 
         waitForStart();
 
-        roboHardware.extendMotor.setTargetPosition(roboHardware.extendMotor.getCurrentPosition());
+        roboHardware.leftExtendMotor.setTargetPosition(roboHardware.leftExtendMotor.getCurrentPosition());
+        roboHardware.rightExtendMotor.setTargetPosition(roboHardware.rightExtendMotor.getCurrentPosition());
 
         while (opModeIsActive()) {
             //******************************GAME FUNCTIONS******************************
@@ -32,11 +33,27 @@ public class MechTeleop extends LinearOpMode {
             //roboHardware.getBotHeadings(); //print headings
 
             //**********SLIDES**********
-            roboHardware.rangedSlideLift(gamepad2.right_stick_y);
-
+            int increment = 20; //increment by which the motor turns; how many ticks
+            if (gamepad2.right_stick_y < 0) {
+                roboHardware.leftExtendMotor.setTargetPosition(roboHardware.leftExtendMotor.getCurrentPosition() + increment);
+                roboHardware.rightExtendMotor.setTargetPosition(roboHardware.rightExtendMotor.getCurrentPosition() + increment);
+            }
+            else if (gamepad2.right_stick_y > 0) {
+                roboHardware.leftExtendMotor.setTargetPosition(roboHardware.leftExtendMotor.getCurrentPosition() - increment);
+                roboHardware.rightExtendMotor.setTargetPosition(roboHardware.rightExtendMotor.getCurrentPosition() - increment);
+            }
+            else {
+                roboHardware.leftExtendMotor.setTargetPosition(roboHardware.leftExtendMotor.getCurrentPosition());
+                roboHardware.rightExtendMotor.setTargetPosition(roboHardware.rightExtendMotor.getCurrentPosition());
+            }
+            roboHardware.leftExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            roboHardware.rightExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            roboHardware.leftExtendMotor.setPower(0.5);
+            roboHardware.rightExtendMotor.setPower(0.5);
 
             //roboHardware.presetSlideLift(gamepad2.y, gamepad2.x, gamepad2.a);       // High, Low, Bottom
-            telemetry.addData("Current Encoder Position:", roboHardware.extendMotor.getCurrentPosition());
+            telemetry.addData("Current Slides Position:", roboHardware.leftExtendMotor.getCurrentPosition());
+            telemetry.addLine();
 
             //**********INTAKE**********
             if (gamepad2.dpad_down) {
@@ -51,10 +68,15 @@ public class MechTeleop extends LinearOpMode {
                 roboHardware.spinServo.setPosition(0.5);
             }
 
-            ////**********RESET IMU**********
+            //**********RESET IMU**********
             if (gamepad1.right_stick_button) {
                 roboHardware.reInitImu();
             }   //RS button
+
+            //**********ODOMETRY VALUES**********
+            telemetry.addData("X offset", roboHardware.odo.getXOffset()); //output X position relative to starting pos
+            telemetry.addData("Y offset", roboHardware.odo.getYOffset()); //output Y position relative to starting pos
+            telemetry.addData("Device Scalar", roboHardware.odo.getYawScalar());
 
             //******************************TEST FUNCTIONS******************************
 

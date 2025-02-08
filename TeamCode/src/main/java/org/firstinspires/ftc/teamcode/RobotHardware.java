@@ -14,12 +14,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-
-import java.util.Locale;
-
 public class RobotHardware {
 
     //FIRST: define all objects
@@ -28,8 +22,9 @@ public class RobotHardware {
         this.hardwareMap = hardwareMap;
         this.teleOp = teleOp;
     } //RobotHardware functions
-    public IMU imu; //Port 12C Bus 0
     //internal REV IMU
+    public IMU imu; //Port 12C Bus 0
+    public GoBildaPinpointDriver odo; //Port 12C Bus 0
 
     public double angleDiff = 0;
     //TODO add a 180 difference? to fix field centric
@@ -44,7 +39,9 @@ public class RobotHardware {
     public DcMotor backRightMotor; // port 1
     public Servo spinServo; //port 0
     //Servo that spins the wheel for intake
-    public DcMotor extendMotor; //port 2 E
+    public DcMotor leftExtendMotor; //port 2 E
+    public DcMotor rightExtendMotor; //port 1 E
+
     //Motor that extends the slides
 
     //public GoBildaPinpointDriver odo;
@@ -94,10 +91,13 @@ public class RobotHardware {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         initMotor(backRightMotor, false);
 
-        //Slide Extension Motor
-        extendMotor = hardwareMap.get(DcMotor.class, "extendMotor");
-        initEncoderMotor(extendMotor, true);
-        extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
+        //Slide Extension Motors
+        leftExtendMotor = hardwareMap.get(DcMotor.class, "leftExtendMotor");
+        initEncoderMotor(leftExtendMotor, true);
+        leftExtendMotor.setTargetPosition(leftExtendMotor.getCurrentPosition());
+        rightExtendMotor = hardwareMap.get(DcMotor.class, "rightExtendMotor");
+        initEncoderMotor(rightExtendMotor, true);
+        rightExtendMotor.setTargetPosition(rightExtendMotor.getCurrentPosition());
 
         //Servo
         spinServo = hardwareMap.get(Servo.class, "spinServo");
@@ -113,6 +113,14 @@ public class RobotHardware {
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw(); //When initialized, resets the core/base direction as where it's facing
+
+        //Odometry Pods (data is from the odometry computer)
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        odo.setOffsets(0, 0); //sets the point that the pods track around; ex. the center of the robot
+        //At 0, the pods track around themselves
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD); //set encoder resolution
+        odo.resetPosAndIMU(); //recallibrate
+
 
     } // initializes all hardware components
     public void robotCentricDrive(double x, double y, double rx) {
@@ -187,34 +195,47 @@ public class RobotHardware {
     public void presetSlideLift(boolean y, boolean x, boolean a) {
 
         if (y) {
-            extendMotor.setTargetPosition(8000);
+            leftExtendMotor.setTargetPosition(8000);
+            rightExtendMotor.setTargetPosition(8000);
         } //top
         else if (x) {
-            extendMotor.setTargetPosition(4000);
+            leftExtendMotor.setTargetPosition(4000);
+            rightExtendMotor.setTargetPosition(4000);
         } //low
         else if (a) {
-            extendMotor.setTargetPosition(0);
+            rightExtendMotor.setTargetPosition(0);
+            leftExtendMotor.setTargetPosition(0);
         } //bottom
 
-        extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendMotor.setPower(0.5);
+        leftExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftExtendMotor.setPower(0.5);
+        rightExtendMotor.setPower(0.5);
 
     }
 
     public void rangedSlideLift(double y) {
 
+        leftExtendMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightExtendMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         if (y > 0) {
-            extendMotor.setTargetPosition(extendMotor.getCurrentPosition() + 10);
+            leftExtendMotor.setTargetPosition(leftExtendMotor.getCurrentPosition() + 10);
+            rightExtendMotor.setTargetPosition(rightExtendMotor.getCurrentPosition() + 10);
         }
         else if (y < 0) {
-            extendMotor.setTargetPosition(extendMotor.getCurrentPosition() - 10);
+            leftExtendMotor.setTargetPosition(leftExtendMotor.getCurrentPosition() - 10);
+            rightExtendMotor.setTargetPosition(rightExtendMotor.getCurrentPosition() - 10);
         }
         else {
-            extendMotor.setTargetPosition(extendMotor.getCurrentPosition());
+            leftExtendMotor.setTargetPosition(leftExtendMotor.getCurrentPosition());
+            rightExtendMotor.setTargetPosition(rightExtendMotor.getCurrentPosition());
         }
 
-        extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendMotor.setPower(0.5);
+        leftExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftExtendMotor.setPower(0.5);
+        rightExtendMotor.setPower(0.5);
 
     }
 
@@ -351,9 +372,12 @@ public class RobotHardware {
 
     } //turn based on odometry
     public void autoSlideLift (int target) {
-        extendMotor.setTargetPosition(target);
-        extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendMotor.setPower(0.5);
+        leftExtendMotor.setTargetPosition(target);
+        rightExtendMotor.setTargetPosition(target);
+        leftExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftExtendMotor.setPower(0.5);
+        rightExtendMotor.setPower(0.5);
     }
     public void stopDrive() {
         frontRightMotor.setPower(0);
@@ -363,7 +387,8 @@ public class RobotHardware {
     } //stops all drive movement
     public void stopAll () {
         stopDrive();
-        extendMotor.setPower(0);
+        leftExtendMotor.setPower(0);
+        rightExtendMotor.setPower(0);
         spinServo.setPosition(0.5);
     } //stops all motor, servo, etc. movement
 

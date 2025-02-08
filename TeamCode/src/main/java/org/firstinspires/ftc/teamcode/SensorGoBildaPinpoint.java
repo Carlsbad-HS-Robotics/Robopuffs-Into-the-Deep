@@ -63,9 +63,7 @@ For support, contact tech@gobilda.com
 public class SensorGoBildaPinpoint extends LinearOpMode {
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-
     double oldTime = 0;
-
 
     @Override
     public void runOpMode() {
